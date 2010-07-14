@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$modelarray=explode(" ",$_POST['model']);
 	$query.="". $modelarray[0] . ", ";
 	$query.="'". $_POST['serial'] . "', ";
-	$locparts=explode($_POST['location']," ");
+	$locparts=explode(" ",$_POST['location']);
 	$query.="". $locparts[0] . ", ";
 	$query.="'". $_POST['institute_inventory_number'] . "', ";
 	$query.="'". $_POST['comment'] . "');";
@@ -66,7 +66,7 @@ echo "<td>location</td>";
 echo "<td>comment</td>";
 echo "</tr>\n";
 
-$result = pg_query($dbconn, "SELECT * FROM objects INNER JOIN models USING (model) $condition;");
+$result = pg_query($dbconn, "SELECT id,manufacturer,name,serial,location,objects.comment FROM objects INNER JOIN models USING (model) $condition;");
 while ($row=pg_fetch_assoc($result)) {
 	echo "<tr class=\"rundbrun\">";
 	echo "<td><a href=\"object.php?object='".$row['id']."'\">".$row['id']."</a></td>";
@@ -76,7 +76,7 @@ while ($row=pg_fetch_assoc($result)) {
 	echo "<td><a href=\"model.php?model=".$row['model']."\">".$row['name']."</a></td>";
 	echo "<td>".$row['serial']."</td>";
 	echo "<td>".get_location($dbconn,$row['location'])."</td>";
-	echo "<td>".$row['objects.comment']."</td>";
+	echo "<td>".$row['comment']."</td>";
 	echo "</tr>\n";
  }
 echo "</table>\n";

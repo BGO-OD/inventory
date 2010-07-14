@@ -72,14 +72,22 @@ echo "<td>id</td>";
 echo "<td>location</td>";
 echo "<td>type</td>";
 echo "<td>comment</td>";
+echo "<td>type</td>";
+echo "<td>manufacturer</td>";
+echo "<td>name</td>";
+echo "<td>id</td>";
 echo "</tr>\n";
-$result = pg_query($dbconn, "SELECT * FROM locations WHERE parent_location=$location;");
+$result = pg_query($dbconn, "SELECT location,locations.type AS loctype ,locations.comment,models.type AS modtype ,manufacturer,name,id FROM locations LEFT OUTER JOIN (objects INNER JOIN models USING (model)) USING (location) WHERE parent_location=$location;");
 while ($row=pg_fetch_assoc($result)) {
 	echo "<tr class=\"rundbrun\">";
 	echo "<td>".$row['location']."</td>";
 	echo "<td>".get_location($dbconn,$row['location'])."</td>";
-	echo "<td>".$row['type']."</td>";
+	echo "<td>".$row['loctype']."</td>";
 	echo "<td>".$row['comment']."</td>";
+	echo "<td>".$row['modtype']."</td>";
+	echo "<td>".$row['manufacturer']."</td>";
+	echo "<td>".$row['name']."</td>";
+	echo "<td><a href=\"object.php?object='".$row['id']."'\">".$row['id']."</a></td>";
 	echo "</tr>\n";
  }
 echo "</table>\n";
