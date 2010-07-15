@@ -51,17 +51,21 @@ echo "<table class=\"rundbtable\">\n";
 echo "<tr class=\"rundbhead\">";
 echo "<td>id</td>";
 echo "<td>serial</td>";
+echo "<td>object name</td>";
 echo "<td>location</td>";
+echo "<td>used by</td>";
 echo "<td>comment</td>";
 echo "</tr>\n";
 
-$result = pg_query($dbconn, "SELECT * FROM models INNER JOIN objects USING (model) WHERE model=$model;");
+$result = pg_query($dbconn, "SELECT id,serial,object_name,location,objects.comment,users.name as username,userid FROM (objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id) WHERE model=$model;");
 while ($row=pg_fetch_assoc($result)) {
 	echo "<tr class=\"rundbrun\">";
-	echo "<td><a href=\"object.php?object='".$row['id']."'\">".$row['id']."</a></td>";
-	echo "<td>".$row['serial']."</td>";
+	echo "<td><a href=\"object.php?object='{$row['id']}'\">{$row['id']}</a></td>";
+	echo "<td>{$row['serial']}</td>";
+	echo "<td>{$row['object_name']}</td>";
 	echo "<td>".get_location($dbconn,$row['location'])."</td>";
-	echo "<td>".$row['objects.comment']."</td>";
+	echo "<td><a href=\"objects.php?condition=userid={$row['userid']}\">{$row['username']}</a></td>";
+	echo "<td>{$row['comment']}</td>";
 	echo "</tr>\n";
  }
 echo "</table>\n";

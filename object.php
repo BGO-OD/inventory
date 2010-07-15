@@ -86,6 +86,26 @@ while ($row=pg_fetch_assoc($result)) {
  }
 echo "</table>\n";
 
+echo "<h2>Usage history</h2>\n";
+
+echo "<table class=\"rundbtable\">\n";
+echo "<tr class=\"rundbhead\">";
+echo "<td>From</td>";
+echo "<td>Till</td>";
+echo "<td>used by</td>";
+echo "<td>comment</td>";
+echo "</tr>\n";
+$result = pg_query($dbconn,"SELECT * FROM usage NATURAL INNER JOIN users WHERE id=$object ORDER BY validfrom DESC;");
+while ($row=pg_fetch_assoc($result)) {
+	echo "<tr class=\"rundbrun\">";
+	echo "<td>{$row['validfrom']}</td>";
+	echo "<td>{$row['validto']}</td>";
+	echo "<td>{$row['name']}</td>";
+	echo "<td>{$row['comment']}</td>";
+	echo "</tr>\n";
+ }
+echo "</table>\n";
+
 echo "</div>";
 page_foot();
 ?>

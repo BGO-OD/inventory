@@ -28,6 +28,7 @@ function navigation_bar() {
 	echo "<a class=\"navbutton\" href=\"locations.php\">Locations list</a>\n";
 	echo "<a class=\"navbutton\" href=\"models.php\">Models list</a>\n";
 	echo "<a class=\"navbutton\" href=\"objects.php\">Objects list</a>\n";
+	echo "<a class=\"navbutton\" href=\"users.php\">User list</a>\n";
 	echo "</DIV>\n";
 }
 
