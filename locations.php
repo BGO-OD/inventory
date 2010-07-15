@@ -19,14 +19,14 @@ if (!$dbconn) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$query="INSERT INTO locations (type,location_name,";
-	if ($_POST['parent_location']!="") {
+	if ($_POST['location']!="0") {
 		$query.="parent_location,";
 	}
 	$query.="comment) VALUES (";
 	$query.="'{$_POST['type']}', ";
 	$query.="'{$_POST['location_name']}', ";
-	if ($_POST['parent_location']!="") {
-		$query.="'{$_POST['parent_location']}', ";
+	if ($_POST['location']!="0") {
+		$query.="'{$_POST['location']}', ";
 	}
 	$query.="'{$_POST['comment']}');";
 	$result=pg_query($dbconn,$query);
@@ -54,9 +54,9 @@ if ($condition=="") {
 	$result = pg_query($dbconn, "SELECT location,type,location_name,comment FROM locations $condition ORDER BY location_name;");
 	while ($row=pg_fetch_assoc($result)) {
 		echo "<tr class=\"rundbrun\">";
-		echo "<td>{$row['location']}</td>";
+		echo "<td><a href=\"location.php?location={$row['location']}\">{$row['location']}</a></td>";
 		echo "<td>".get_location($dbconn,$row['location'])."</td>";
-		echo "<td>{$row['type']}</td>";
+		echo "<td><a href=\"locations.php?condition=type='{$row['type']}'\">{$row['type']}</a></td>";
 		echo "<td>{$row['comment']}</td>";
 		echo "</tr>\n";
 	}
@@ -73,10 +73,12 @@ if ($condition=="") {
 		}
 	}
 	echo "</SELECT><br>\n";
-	echo "name: <input type=\"text\" name=\"location_name\" size=\"20\" value=\"\"><br>";
-	echo "parent location: <input type=\"text\" name=\"parent_location\" size=\"20\"><br>";
-	echo "comment: <input type=\"text\" name=\"comment\" size=\"80\" value=\"\"><br>";
-	echo '<input type="submit" value="Submit" >';
+	echo "name: <input type=\"text\" name=\"location_name\" size=\"20\" value=\"\"><br>\n";
+	echo "parent location: ";
+	select_location($dbconn);
+	echo "<br>\n";
+	echo "comment: <input type=\"text\" name=\"comment\" size=\"80\" value=\"\"><br>\n";
+	echo "<input type=\"submit\" value=\"Submit\" >\n";
 	echo "</form>";
 	echo "</div>";
  }

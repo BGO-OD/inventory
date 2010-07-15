@@ -99,13 +99,9 @@ if ($condition=="") {
 	echo "added: <input type=\"text\" name=\"added\" size=\"20\" value=\"\"><br>";
 	echo "owner: <input type=\"text\" name=\"owner\" size=\"20\"><br>";
 	echo "serial: <input type=\"text\" name=\"serial\" size=\"20\"><br>";
-	echo "Location: <SELECT name=\"location\">\n";
-	$result = pg_query($dbconn, "SELECT * FROM locations;");
-	while ($row=pg_fetch_assoc($result)) {
-		echo "<OPTION>" . $row['location'] ." (".get_location($dbconn,$row['location'],FALSE). ")</OPTION>\n";
-	}
-	echo "</SELECT><br>\n";
-	//echo "location: <input type=\"text\" name=\"location\" size=\"60\"  value=\"\"><br>";
+	echo "Location: ";
+	select_location($dbconn);
+	echo "<br/>";
 	echo "institute inventory: <input type=\"text\" name=\"institute_inventory_number\" size=\"60\"  value=\"\"><br>";
 	echo "comment: <input type=\"text\" name=\"comment\" size=\"60\"  value=\"\"><br>";
 	echo '<input type="submit" value="Submit" >';

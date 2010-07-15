@@ -34,7 +34,7 @@ while ($row=pg_fetch_assoc($result)) {
 	echo "<tr class=\"rundbrun\">";
 	echo "<td>".$row['location']."</td>";
 	echo "<td>".get_location($dbconn,$row['location'])."</td>";
-	echo "<td>".$row['type']."</td>";
+	echo "<td><a href=\"locations.php?condition=type='{$row['type']}'\">{$row['type']}</a></td>";
 	echo "<td><input type=\"text\" name=\"comment\" size=\"50\" value=\"".$row['comment']."\"></td>";
 	echo "</tr>\n";
  }
@@ -80,9 +80,9 @@ echo "</tr>\n";
 $result = pg_query($dbconn, "SELECT location,locations.type AS loctype ,locations.comment,models.type AS modtype ,manufacturer,name,id FROM locations LEFT OUTER JOIN (objects INNER JOIN models USING (model)) USING (location) WHERE parent_location=$location;");
 while ($row=pg_fetch_assoc($result)) {
 	echo "<tr class=\"rundbrun\">";
-	echo "<td>".$row['location']."</td>";
+	echo "<td><a href=\"location.php?location={$row['location']}\">{$row['location']}</a></td>";
 	echo "<td>".get_location($dbconn,$row['location'])."</td>";
-	echo "<td>".$row['loctype']."</td>";
+	echo "<td><a href=\"locations.php?condition=type='{$row['loctype']}'\">{$row['loctype']}</a></td>";
 	echo "<td>".$row['comment']."</td>";
 	echo "<td>".$row['modtype']."</td>";
 	echo "<td>".$row['manufacturer']."</td>";

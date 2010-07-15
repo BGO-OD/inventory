@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 echo '<div id=content><h1>Models</h1>';
 if ($condition=="") {
 	foreach ($model_types as $type) {
-		echo "<a href=\"modelss.php?condition=type='$type'\">List of ${type} types</a><br>\n";
+		echo "<a href=\"models.php?condition=type='$type'\">List of ${type} types</a><br>\n";
 	}
  } else {
 	echo "<table class=\"rundbtable\">\n";
