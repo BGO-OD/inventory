@@ -41,7 +41,7 @@ if ($condition=="") {
 	echo "<td>model</td>";
 	echo "<td>type</td>";
 	echo "<td>manufacturer</td>";
-	echo "<td>name</td>";
+	echo "<td>model name</td>";
 	echo "<td>maintenance_interval</td>";
 	echo "<td>sublocations</td>";
 	echo "<td>description</td>";
@@ -71,7 +71,7 @@ if ($condition=="") {
 	}
 	echo "</SELECT><br>\n";
 	echo "manufacturer: <input type=\"text\" name=\"manufacturer\" size=\"20\" value=\"\"><br>";
-	echo "name: <input type=\"text\" name=\"name\" size=\"20\"><br>";
+	echo "model name: <input type=\"text\" name=\"name\" size=\"20\"><br>";
 	echo "maintenance interval: <input type=\"text\" name=\"maintenance_interval\" size=\"20\"><br>";
 	echo "maintenance instructions: <input type=\"textarea\" name=\"maintenance_instructions\" rows=\"5\" columns=\"50\"><br>";
 	echo "sublocations: <input type=\"text\" name=\"sublocations\" size=\"60\"  value=\"\"><br>";

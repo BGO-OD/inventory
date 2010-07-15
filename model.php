@@ -22,7 +22,7 @@ echo "<tr class=\"rundbhead\">";
 echo "<td>model</td>";
 echo "<td>type</td>";
 echo "<td>manufacturer</td>";
-echo "<td>name</td>";
+echo "<td>model name</td>";
 echo "<td>maintenance_interval</td>";
 echo "<td>sublocations</td>";
 echo "<td>description</td>";

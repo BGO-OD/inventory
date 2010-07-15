@@ -23,20 +23,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$result=pg_query($dbconn,$query);
  }
 
-echo '<div id=content><h1>Objects</h1>';
+echo '<div id=content><h1>Object</h1>';
 echo "<table class=\"rundbtable\">\n";
 
 echo "<tr class=\"rundbhead\">";
 echo "<td>id</td>";
 echo "<td>type</td>";
 echo "<td>manufacturer</td>";
-echo "<td>name</td>";
+echo "<td>model name</td>";
 echo "<td>serial</td>";
 echo "<td>location</td>";
+echo "<td>used by</td>";
 echo "<td>comment</td>";
 echo "</tr>\n";
 
-$result = pg_query($dbconn, "SELECT * FROM objects INNER JOIN models USING (model) WHERE id=$object;");
+$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username FROM (objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id) WHERE id=$object;");
 while ($row=pg_fetch_assoc($result)) {
 	echo "<tr class=\"rundbrun\">";
 	echo "<td><a href=\"object.php?object='".$row['id']."'\">".$row['id']."</a></td>";
@@ -46,7 +47,8 @@ while ($row=pg_fetch_assoc($result)) {
 	echo "<td><a href=\"model.php?model=".$row['model']."\">".$row['name']."</a></td>";
 	echo "<td>".$row['serial']."</td>";
 	echo "<td>".get_location($dbconn,$row['location'])."</td>";
-	echo "<td>".$row['objects.comment']."</td>";
+	echo "<td>{$row['username']}</td>";
+	echo "<td>".$row['comment']."</td>";
 	echo "</tr>\n";
  }
 echo "</table>\n";

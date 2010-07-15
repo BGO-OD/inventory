@@ -67,13 +67,14 @@ if ($condition=="") {
 	echo "<td>id</td>";
 	echo "<td>type</td>";
 	echo "<td>manufacturer</td>";
-	echo "<td>name</td>";
+	echo "<td>model name</td>";
 	echo "<td>serial</td>";
 	echo "<td>location</td>";
+	echo "<td>used by</td>";
 	echo "<td>comment</td>";
 	echo "</tr>\n";
 	
-	$result = pg_query($dbconn, "SELECT id,manufacturer,name,serial,location,objects.comment,model,type FROM objects INNER JOIN models USING (model) $condition;");
+	$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username FROM (objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id) $condition;");
 	while ($row=pg_fetch_assoc($result)) {
 		echo "<tr class=\"rundbrun\">";
 		echo "<td><a href=\"object.php?object='".$row['id']."'\">".$row['id']."</a></td>";
@@ -83,6 +84,7 @@ if ($condition=="") {
 		echo "<td><a href=\"model.php?model=".$row['model']."\">".$row['name']."</a></td>";
 		echo "<td>".$row['serial']."</td>";
 		echo "<td>".get_location($dbconn,$row['location'])."</td>";
+		echo "<td>{$row['username']}</td>";
 		echo "<td>".$row['comment']."</td>";
 		echo "</tr>\n";
 	}
