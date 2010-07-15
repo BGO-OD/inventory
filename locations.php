@@ -23,13 +23,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$query.="parent_location,";
 	}
 	$query.="comment) VALUES (";
-	$query.="'". $_POST['type'] . "', ";
-	$query.="'". $_POST['location_name'] . "', ";
+	$query.="'{$_POST['type']}', ";
+	$query.="'{$_POST['location_name']}', ";
 	if ($_POST['parent_location']!="") {
-		$query.="'". $_POST['parent_location'] . "', ";
+		$query.="'{$_POST['parent_location']}', ";
 	}
-	$query.="'". $_POST['comment'] . "');";
+	$query.="'{$_POST['comment']}');";
 	$result=pg_query($dbconn,$query);
+	$condition=" WHERE type='{$_POST['type']}'";
  }
 
 echo '<div id=content><h1>Locations</h1>';
@@ -65,7 +66,11 @@ if ($condition=="") {
 	echo "<form action=\"locations.php\" method=\"post\">";
 	echo "Type: <SELECT name=\"type\">\n";
 	foreach ($location_types as $type) {
-		echo "<OPTION>$type</OPTION>\n";
+		if (strpos($condition,$type)===FALSE) {
+			echo "<OPTION>$type</OPTION>\n";
+		} else {
+			echo "<OPTION selected>$type</OPTION>\n";
+		}
 	}
 	echo "</SELECT><br>\n";
 	echo "name: <input type=\"text\" name=\"location_name\" size=\"20\" value=\"\"><br>";
