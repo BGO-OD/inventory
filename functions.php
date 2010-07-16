@@ -102,5 +102,22 @@ function select_location($dbconn) {
 	echo "</SELECT></SPAN>";
 }
 
+function select_user($dbconn,$olduser="") {
+	$result = pg_query($dbconn, "SELECT userid,name FROM users;");
+	
+	echo "<SELECT name=\"userid\">\n";
+	while ($row=pg_fetch_assoc($result)) {
+		if ($olduser==$row['name']) {
+			$sel="selected";
+		} else {
+			$sel="";
+		}
+		echo "<OPTION $sel value={$row['userid']}>{$row['name']}</OPTION>\n";
+	}
+	echo "</SELECT>\n";
+}
+
+
+
 
 ?>

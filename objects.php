@@ -23,13 +23,14 @@ if (!$dbconn) {
 };
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	$query="INSERT INTO objects (owner,added,model,serial,location,institute_inventory_number,object_name,comment) VALUES (";
+	$query="INSERT INTO objects (owner,added,model,serial,location,institute_inventory_number,order_number,object_name,comment) VALUES (";
 	$query.="'{$_POST['owner']}', ";
 	$query.="'{$_POST['added']}', ";
 	$query.="{$_POST['model']}, ";
 	$query.="'{$_POST['serial']}', ";
 	$query.="{$_POST['location']}, ";
 	$query.="'{$_POST['institute_inventory_number']}', ";
+	$query.="'{$_POST['order_number']}', ";
 	$query.="'{$_POST['object_name']}');";
 	$query.="'{$_POST['comment']}');";
 	$result=pg_query($dbconn,$query);
@@ -116,6 +117,7 @@ if ($condition=="") {
 		select_location($dbconn);
 		echo "<br/>";
 		echo "institute inventory: <input type=\"text\" name=\"institute_inventory_number\" size=\"60\"  value=\"\"><br>";
+		echo "order number: <input type=\"text\" name=\"order_number\" size=\"60\"  value=\"\"><br>";
 		echo "comment: <input type=\"text\" name=\"comment\" size=\"60\"  value=\"\"><br>";
 		echo '<input type="submit" value="Submit" >';
 		echo "</form>";

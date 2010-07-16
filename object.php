@@ -14,13 +14,35 @@ if (!$dbconn) {
 };
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+	switch ($_POST['submit']) {
+	case 'maintain':
 		$query="INSERT INTO maintenance (id,date,responsible,status,comment) VALUES (";
-	$query.="$object, ";
-	$query.="'". $_POST['date'] . "', ";
-	$query.="'". $_POST['responsible'] . "', ";
-	$query.="'". $_POST['status'] . "', ";
-	$query.="'". $_POST['comment'] . "');";
-	$result=pg_query($dbconn,$query);
+		$query.="$object, ";
+		$query.="'". $_POST['date'] . "', ";
+		$query.="'". $_POST['responsible'] . "', ";
+		$query.="'". $_POST['status'] . "', ";
+		$query.="'". $_POST['comment'] . "');";
+		$result=pg_query($dbconn,$query);
+		break;
+	case 'update object_name':
+	case 'update location':
+	case 'update comment':
+	case 'update serial':
+	case 'update institute_inventory_number':
+	case 'update order_number':
+		$submitparts=explode(" ",$_POST['submit']);
+		$field=$submitparts[1];
+		$query="UPDATE objects SET $field='{$_POST[$field]}' WHERE id=$object;";
+		$result=pg_query($dbconn,$query);
+		break;
+	case 'update_user':
+		$query="UPDATE usage SET validto='now()' WHERE id=$object AND validto='infinity';";
+		$result=pg_query($dbconn,$query);
+		$query="INSERT INTO usage (id,userid,comment) VALUES ($object,{$_POST['userid']},'{$_POST['usage_comment']}');";
+		$result=pg_query($dbconn,$query);
+
+		break;
+	}
  }
 
 echo '<div id=content><h1>Object</h1>';
@@ -37,8 +59,8 @@ echo "<td>used by</td>";
 echo "<td>comment</td>";
 echo "</tr>\n";
 
-$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username FROM (objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id) WHERE id=$object;");
-while ($row=pg_fetch_assoc($result)) {
+$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,object_name,usage.comment as usage_comment,institute_inventory_number,order_number FROM (objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid,comment FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id) WHERE id=$object;");
+$row=pg_fetch_assoc($result);
 	echo "<tr class=\"rundbrun\">";
 	echo "<td><a href=\"object.php?object='".$row['id']."'\">".$row['id']."</a></td>";
 	
@@ -50,8 +72,42 @@ while ($row=pg_fetch_assoc($result)) {
 	echo "<td>{$row['username']}</td>";
 	echo "<td>".$row['comment']."</td>";
 	echo "</tr>\n";
- }
+ 
 echo "</table>\n";
+
+echo "<form action=\"object.php?object=$object\" method=\"POST\">";
+
+echo "<table class=\"rundbtable\">\n";
+
+echo "<tr><td>object name</td>";
+echo "<td><input type=\"text\" name=\"object_name\" size=60 value=\"${row['object_name']}\"></td>\n";
+echo "<td><button name=\"submit\" type=\"submit\" value=\"update object_name\" >Update</button></td></tr>\n";
+
+echo "<tr><td>location</td>   <td>".get_location($dbconn,$row['location'])." ";
+select_location($dbconn);
+echo "</td><td><button name=\"submit\" type=\"submit\" value=\"update location\" >Update</button></td></tr>\n";
+echo "<tr><td>User</td>       <td>";
+select_user($dbconn,$row['username']);
+echo "Comment: <input type=\"text\" name=\"usage_comment\" size=40 value=\"${row['usage_comment']}\">";
+echo "</td><td><button name=\"submit\" type=\"submit\" value=\"update_user\" >Update</button></td></tr>\n";
+echo "<tr><td>object comment</td>";
+echo "<td><input type=\"text\" name=\"comment\" size=60 value=\"${row['comment']}\"></td>\n";
+echo "<td><button name=\"submit\" type=\"submit\" value=\"update comment\" >Update</button></td></tr>\n";
+echo "<tr><td>serial number</td>";
+echo "<td><input type=\"text\" name=\"serial\" size=60 value=\"${row['serial']}\"></td>\n";
+echo "<td><button name=\"submit\" type=\"submit\" value=\"update serial\" >Update</button></td></tr>\n";
+echo "<tr><td>institute inventory number</td>";
+echo "<td><input type=\"text\" name=\"institute_inventory_number\" size=60 value=\"${row['institute_inventory_number']}\"></td>\n";
+echo "<td><button name=\"submit\" type=\"submit\" value=\"update institute_inventory_number\" >Update</button></td></tr>\n";
+echo "<tr><td>order number</td>";
+echo "<td><input type=\"text\" name=\"order_number\" size=60 value=\"${row['order_number']}\"></td>\n";
+echo "<td><button name=\"submit\" type=\"submit\" value=\"update order_number\" >Update</button></td></tr>\n";
+
+
+
+echo "</table>\n";
+
+
 
 echo '<h2>Maintenances</h2>';
 
@@ -61,9 +117,13 @@ echo "Next maintenance: ".$row['next_maintenance']."\n";
 echo "<form action=\"object.php?object=$object\" method=\"post\">";
 echo "date: <input type=\"text\" name=\"date\" size=\"20\" value=\"now\"><br>";
 echo "responsible: <input type=\"text\" name=\"responsible\" size=\"20\" value=\"\"><br>";
-echo "status: <input type=\"text\" name=\"status\" size=\"20\" value=\"\"><br>";
+echo "Type: <SELECT name=\"status\">\n";
+	foreach ($maintenance_states as $state) {
+		echo "<OPTION>$state</OPTION>\n";
+	}
+echo "</SELECT><br>\n";
 echo "comment: <input type=\"text\" name=\"comment\" size=\"20\" value=\"\"><br>";
-echo '<input type="submit" value="Submit" >';
+echo "<button name=\"submit\" type=\"submit\" value=\"maintain\" >Enter maintenance data</button><br>\n";
 echo "</form>";
 
 echo "<table class=\"rundbtable\">\n";
