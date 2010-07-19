@@ -25,15 +25,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result=pg_query($dbconn,$query);
 		break;
 	case 'update object_name':
-	case 'update location':
 	case 'update comment':
 	case 'update serial':
+	case 'update ownerid':
 	case 'update institute_inventory_number':
 	case 'update order_number':
 		$submitparts=explode(" ",$_POST['submit']);
 		$field=$submitparts[1];
 		$query="UPDATE objects SET $field='{$_POST[$field]}' WHERE id=$object;";
 		$result=pg_query($dbconn,$query);
+		break;
+	case 'update location':
+		$result = pg_query($dbconn,"SELECT location,sublocations FROM objects INNER JOIN models  USING (model) WHERE id=$object;");
+		$row=pg_fetch_assoc($result);
+		$old_location=$row['location'];
+		$submitparts=explode(" ",$_POST['submit']);
+		switch ($submitparts[2]) {
+		case 'empty':
+		case 'full':
+		case 'basic':
+			$query="UPDATE objects SET location='{$_POST['location']}' WHERE id=$object;";
+			$result=pg_query($dbconn,$query);
+		}
 		break;
 	case 'update_user':
 		$query="UPDATE usage SET validto='now()' WHERE id=$object AND validto='infinity';";
@@ -59,7 +72,7 @@ echo "<td>used by</td>";
 echo "<td>comment</td>";
 echo "</tr>\n";
 
-$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,object_name,usage.comment as usage_comment,institute_inventory_number,order_number FROM (objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid,comment FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id) WHERE id=$object;");
+$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,object_name,usage.comment as usage_comment,institute_inventory_number,order_number,sublocations,owner_name FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid,comment FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id))   LEFT OUTER JOIN owners USING (ownerid) WHERE id=$object;");
 $row=pg_fetch_assoc($result);
 	echo "<tr class=\"rundbrun\">";
 	echo "<td><a href=\"object.php?object='".$row['id']."'\">".$row['id']."</a></td>";
@@ -83,9 +96,16 @@ echo "<tr><td>object name</td>";
 echo "<td><input type=\"text\" name=\"object_name\" size=60 value=\"${row['object_name']}\"></td>\n";
 echo "<td><button name=\"submit\" type=\"submit\" value=\"update object_name\" >Update</button></td></tr>\n";
 
-echo "<tr><td>location</td>   <td>".get_location($dbconn,$row['location'])." ";
+echo "<tr><td rowspan=\"3\">location</td>   <td rowspan=\"3\">".get_location($dbconn,$row['location'])." ";
 select_location($dbconn);
-echo "</td><td><button name=\"submit\" type=\"submit\" value=\"update location\" >Update</button></td></tr>\n";
+echo "</td>";
+if ($row['sublocations']!="") {
+	echo "<td><button name=\"submit\" type=\"submit\" value=\"update location empty\" >Move without content</button></td></tr>\n";
+	echo "<td><button name=\"submit\" type=\"submit\" value=\"update location full\" >Move with all content</button></td></tr>\n";
+	echo "<td><button name=\"submit\" type=\"submit\" value=\"update location basic\" >Move with power/fan</button></td></tr>\n";
+ } else {
+	echo "<td rowspan=\"3\"><button name=\"submit\" type=\"submit\" value=\"update location empty\" >Move</button></td></tr></tr></tr>\n";
+ }
 echo "<tr><td>User</td>       <td>";
 select_user($dbconn,$row['username']);
 echo "Comment: <input type=\"text\" name=\"usage_comment\" size=40 value=\"${row['usage_comment']}\">";
@@ -99,6 +119,9 @@ echo "<td><button name=\"submit\" type=\"submit\" value=\"update serial\" >Updat
 echo "<tr><td>institute inventory number</td>";
 echo "<td><input type=\"text\" name=\"institute_inventory_number\" size=60 value=\"${row['institute_inventory_number']}\"></td>\n";
 echo "<td><button name=\"submit\" type=\"submit\" value=\"update institute_inventory_number\" >Update</button></td></tr>\n";
+echo "<tr><td>Owner</td>       <td>";
+select_owner($dbconn,$row['owner_name']);
+echo "</td><td><button name=\"submit\" type=\"submit\" value=\"update ownerid\" >Update</button></td></tr>\n";
 echo "<tr><td>order number</td>";
 echo "<td><input type=\"text\" name=\"order_number\" size=60 value=\"${row['order_number']}\"></td>\n";
 echo "<td><button name=\"submit\" type=\"submit\" value=\"update order_number\" >Update</button></td></tr>\n";

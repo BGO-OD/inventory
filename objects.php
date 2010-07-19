@@ -23,18 +23,19 @@ if (!$dbconn) {
 };
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	$query="INSERT INTO objects (owner,added,model,serial,location,institute_inventory_number,order_number,object_name,comment) VALUES (";
-	$query.="'{$_POST['owner']}', ";
+	$query="INSERT INTO objects (ownerid,added,model,serial,location,institute_inventory_number,order_number,object_name,comment) VALUES (";
+	$query.="'{$_POST['ownerid']}', ";
 	$query.="'{$_POST['added']}', ";
 	$query.="{$_POST['model']}, ";
 	$query.="'{$_POST['serial']}', ";
 	$query.="{$_POST['location']}, ";
 	$query.="'{$_POST['institute_inventory_number']}', ";
 	$query.="'{$_POST['order_number']}', ";
-	$query.="'{$_POST['object_name']}');";
+	$query.="'{$_POST['object_name']}', ";
 	$query.="'{$_POST['comment']}');";
 	$result=pg_query($dbconn,$query);
-  $result=pg_query($dbconn,"SELECT * FROM models WHERE model='".$modelarray[0]."';");
+
+  $result=pg_query($dbconn,"SELECT * FROM models WHERE model={$_POST['model']};");
 	$row=pg_fetch_assoc($result);
 	$condition=" WHERE type='{$row['type']}'";
 	if ($row['sublocations']!="") {
@@ -81,7 +82,7 @@ if ($condition=="") {
 	echo "<td>comment</td>";
 	echo "</tr>\n";
 	
-	$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,userid,object_name FROM (objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id) $condition;");
+	$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,userid,object_name FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id)) LEFT OUTER JOIN owners USING (ownerid) $condition;");
 	while ($row=pg_fetch_assoc($result)) {
 		echo "<tr class=\"rundbrun\">";
 		echo "<td><a href=\"object.php?object='".$row['id']."'\">".$row['id']."</a></td>";
@@ -109,16 +110,17 @@ if ($condition=="") {
 			echo "<OPTION value=\"{$row['model']}\">{$row['type']} {$row['manufacturer']} {$row['name']})</OPTION>\n";
 		}
 		echo "</SELECT><br>\n";
-		echo "added: <input type=\"text\" name=\"added\" size=\"20\" value=\"\"><br>";
-		echo "owner: <input type=\"text\" name=\"owner\" size=\"20\"><br>";
-		echo "serial: <input type=\"text\" name=\"serial\" size=\"20\"><br>";
-		echo "object_name: <input type=\"text\" name=\"object_name\" size=\"20\"><br>";
+		echo "added: <input type=\"text\" name=\"added\" size=\"20\" value=\"\"><br>\n";
+		echo "owner: ";
+		select_owner($dbconn,$row['owner_name']);echo "<br>\n";
+		echo "serial: <input type=\"text\" name=\"serial\" size=\"20\"><br>\n";
+		echo "object_name: <input type=\"text\" name=\"object_name\" size=\"20\"><br>\n";
 		echo "Location: ";
 		select_location($dbconn);
 		echo "<br/>";
-		echo "institute inventory: <input type=\"text\" name=\"institute_inventory_number\" size=\"60\"  value=\"\"><br>";
-		echo "order number: <input type=\"text\" name=\"order_number\" size=\"60\"  value=\"\"><br>";
-		echo "comment: <input type=\"text\" name=\"comment\" size=\"60\"  value=\"\"><br>";
+		echo "institute inventory: <input type=\"text\" name=\"institute_inventory_number\" size=\"60\"  value=\"\"><br>\n";
+		echo "order number: <input type=\"text\" name=\"order_number\" size=\"60\"  value=\"\"><br>\n";
+		echo "comment: <input type=\"text\" name=\"comment\" size=\"60\"  value=\"\"><br>\n";
 		echo '<input type="submit" value="Submit" >';
 		echo "</form>";
 	}

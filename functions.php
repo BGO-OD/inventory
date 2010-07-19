@@ -29,6 +29,7 @@ function navigation_bar() {
 	echo "<a class=\"navbutton\" href=\"models.php\">Models list</a>\n";
 	echo "<a class=\"navbutton\" href=\"objects.php\">Objects list</a>\n";
 	echo "<a class=\"navbutton\" href=\"users.php\">User list</a>\n";
+	echo "<a class=\"navbutton\" href=\"owners.php\">Owner list</a>\n";
 	echo "</DIV>\n";
 }
 
@@ -106,6 +107,13 @@ function select_user($dbconn,$olduser="") {
 	$result = pg_query($dbconn, "SELECT userid,name FROM users;");
 	
 	echo "<SELECT name=\"userid\">\n";
+	if ($olduser=="") {
+		$sel="selected";
+	} else {
+		$sel="";
+	}
+	echo "<OPTION $sel value='NULL'>no one</OPTION>\n";
+
 	while ($row=pg_fetch_assoc($result)) {
 		if ($olduser==$row['name']) {
 			$sel="selected";
@@ -113,6 +121,28 @@ function select_user($dbconn,$olduser="") {
 			$sel="";
 		}
 		echo "<OPTION $sel value={$row['userid']}>{$row['name']}</OPTION>\n";
+	}
+	echo "</SELECT>\n";
+}
+
+function select_owner($dbconn,$oldowner="") {
+	$result = pg_query($dbconn, "SELECT ownerid,owner_name FROM owners;");
+	
+	echo "<SELECT name=\"ownerid\">\n";
+	if ($oldowner=="") {
+		$sel="selected";
+	} else {
+		$sel="";
+	}
+	echo "<OPTION $sel value='NULL'>no one</OPTION>\n";
+
+	while ($row=pg_fetch_assoc($result)) {
+		if ($oldowner==$row['owner_name']) {
+			$sel="selected";
+		} else {
+			$sel="";
+		}
+		echo "<OPTION $sel value={$row['ownerid']}>{$row['owner_name']}</OPTION>\n";
 	}
 	echo "</SELECT>\n";
 }
