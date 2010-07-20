@@ -23,31 +23,56 @@ if (!$dbconn) {
 };
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+	$location=$_POST['location'];
+	$result=pg_query($dbconn,"SELECT * FROM locations WHERE location=$location;");
+	$locdata=pg_fetch_assoc($result);
+
+  $result=pg_query($dbconn,"SELECT * FROM models WHERE model={$_POST['model']};");
+	$modeldata=pg_fetch_assoc($result);
+	$condition=" WHERE type='{$modeldata['type']}'";
+
+	if ($modeldata['sublocations']!="") {
+		if ($locdata['type']!="Crate") {
+			$result = pg_query($dbconn,"INSERT INTO locations (type,location_name,parent_location) VALUES ('Crate',(select count(*)+1 as ncrates FROM locations WHERE parent_location = $location AND type='Crate'),$location) RETURNING location;");
+			$row=pg_fetch_assoc($result);
+			$location=$row['location'];
+		}
+	}
+
 	$query="INSERT INTO objects (ownerid,added,model,serial,location,institute_inventory_number,order_number,object_name,comment) VALUES (";
 	$query.="'{$_POST['ownerid']}', ";
 	$query.="'{$_POST['added']}', ";
 	$query.="{$_POST['model']}, ";
 	$query.="'{$_POST['serial']}', ";
-	$query.="{$_POST['location']}, ";
+	$query.="$location, ";
 	$query.="'{$_POST['institute_inventory_number']}', ";
 	$query.="'{$_POST['order_number']}', ";
 	$query.="'{$_POST['object_name']}', ";
 	$query.="'{$_POST['comment']}');";
 	$result=pg_query($dbconn,$query);
 
-  $result=pg_query($dbconn,"SELECT * FROM models WHERE model={$_POST['model']};");
-	$row=pg_fetch_assoc($result);
-	$condition=" WHERE type='{$row['type']}'";
-	if ($row['sublocations']!="") {
-		$sublocs=explode(",",$row['sublocations']);
-		foreach ($sublocs as $subloc) {
-			$parts=explode(" ",ltrim($subloc));
-			if (strpos($parts[0],"-")===FALSE) {
-				create_sublocation($dbconn,$parts[1],$parts[0],$_POST['location']);
-			} else {
-				$fromto=explode("-",$parts[0]);
-				for ($i=$fromto[0]; $i<=$fromto[1]; $i++) {
-					create_sublocation($dbconn,$parts[1],$i,$_POST['location']);
+	if ($modeldata['sublocations']!="") {
+		if ($modeldata['sublocations']=="individual") {
+		} else {
+			$sublocs=explode(",",$modeldata['sublocations']);
+			foreach ($sublocs as $subloc) {
+				$parts=explode(" ",ltrim($subloc));
+				if (strpos($parts[0],"-")===FALSE) {
+					$name="";
+					for ($j=0; $j<count($parts); $j++) {
+						$name.=$parts[$j]." ";
+					}
+					create_sublocation($dbconn,$parts[count($parts)-1],$name,$location);
+				} else {
+					$fromto=explode("-",$parts[0]);
+					for ($i=$fromto[0]; $i<=$fromto[1]; $i++) {
+						$name="";
+						for ($j=1; $j<count($parts); $j++) {
+							$name.=$parts[$j]." ";
+						}
+						$name.=$i;
+						create_sublocation($dbconn,$parts[count($parts)-1],$name,$location);
+					}
 				}
 			}
 		}
@@ -107,7 +132,7 @@ if ($condition=="") {
 		echo "Type: <SELECT name=\"model\">\n";
 		$result = pg_query($dbconn, "SELECT * FROM models WHERE type='$type';");
 		while ($row=pg_fetch_assoc($result)) {
-			echo "<OPTION value=\"{$row['model']}\">{$row['type']} {$row['manufacturer']} {$row['name']})</OPTION>\n";
+			echo "<OPTION value=\"{$row['model']}\">{$row['type']} {$row['manufacturer']} {$row['name']}</OPTION>\n";
 		}
 		echo "</SELECT><br>\n";
 		echo "added: <input type=\"text\" name=\"added\" size=\"20\" value=\"\"><br>\n";

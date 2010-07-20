@@ -4,9 +4,16 @@ include '../common/page_functions.php';
 include 'functions.php';
 include 'variables.php';
 
+$typesel="";
 if (isset($_GET['condition'])) {
+	$cond=$_GET['condition'];
 	$condition=" WHERE ".$_GET['condition'];
+	if (strpos($condition,"type")!==FALSE) {
+		$condparts=explode("'",$condition);
+		$typesel=$condparts[1];
+	}
  } else {
+	$cond="";
 	$condition="";
  }
 
@@ -21,7 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$query.="'". $_POST['type'] . "', ";
 	$query.="'". $_POST['manufacturer'] . "', ";
 	$query.="'". $_POST['name'] . "', ";
-	$query.="'". $_POST['maintenance_interval'] . "', ";
+	if ($_POST['maintenance_interval']=="") {
+		$query.="'10 years', ";
+	} else {
+		$query.="'". $_POST['maintenance_interval'] . "', ";
+	}
 	$query.="'". $_POST['maintenance_instructions'] . "', ";
 	$query.="'". $_POST['sublocations'] . "', ";
 	$query.="'". $_POST['description'] . "', ";
@@ -64,10 +75,15 @@ if ($condition=="") {
 	echo "</table>\n";
 	
 	echo "<h1>Add new model</h1>\n";
-	echo "<form action=\"models.php\" method=\"post\">";
+	echo "<form action=\"models.php?$cond'\" method=\"post\">";
 	echo "Type: <SELECT name=\"type\">\n";
 	foreach ($model_types as $type) {
-		echo "<OPTION>" . $type . "</OPTION>\n";
+		if ($typesel==$type) {
+			$sel="selected";
+		} else {
+			$sel="";
+		}
+		echo "<OPTION $sel>" . $type . "</OPTION>\n";
 	}
 	echo "</SELECT><br>\n";
 	echo "manufacturer: <input type=\"text\" name=\"manufacturer\" size=\"20\" value=\"\"><br>";

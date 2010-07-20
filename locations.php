@@ -37,10 +37,11 @@ echo '<div id=content><h1>Locations</h1>';
 
 
 if ($condition=="") {
-		foreach ($location_types as $type) {
+	foreach ($location_types as $type) {
 		echo "<a href=\"locations.php?condition=type='$type'\">List of ${type}s</a><br>\n";
 	}
-
+	echo "<h2>Special Maps and Views</h2>\n";
+	echo "<a href=\"experimental_area.php\">Experimental area</a><br>\n";
  } else {
 	echo "<table class=\"rundbtable\">\n";
 	

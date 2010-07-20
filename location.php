@@ -77,7 +77,7 @@ echo "<td>manufacturer</td>";
 echo "<td>model name</td>";
 echo "<td>id</td>";
 echo "</tr>\n";
-$result = pg_query($dbconn, "SELECT location,locations.type AS loctype ,locations.comment,models.type AS modtype ,manufacturer,name,id FROM locations LEFT OUTER JOIN (objects INNER JOIN models USING (model)) USING (location) WHERE parent_location=$location;");
+$result = pg_query($dbconn, "SELECT location,locations.type AS loctype ,locations.comment,models.type AS modtype ,manufacturer,name,id, lpad(location_name,5,'0') AS ordercolumn FROM locations LEFT OUTER JOIN (objects INNER JOIN models USING (model)) USING (location) WHERE parent_location=$location ORDER BY ordercolumn;");
 while ($row=pg_fetch_assoc($result)) {
 	echo "<tr class=\"rundbrun\">";
 	echo "<td><a href=\"location.php?location={$row['location']}\">{$row['location']}</a></td>";

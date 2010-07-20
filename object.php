@@ -36,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result=pg_query($dbconn,$query);
 		break;
 	case 'update location':
+	case 'update location empty':
 		$result = pg_query($dbconn,"SELECT location,sublocations FROM objects INNER JOIN models  USING (model) WHERE id=$object;");
 		$row=pg_fetch_assoc($result);
 		$old_location=$row['location'];

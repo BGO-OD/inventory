@@ -70,6 +70,32 @@ while ($row=pg_fetch_assoc($result)) {
  }
 echo "</table>\n";
 
+
+echo '<h2>Known problems </h2>';
+echo "<table class=\"rundbtable\">\n";
+
+echo "<tr class=\"rundbhead\">";
+echo "<td>id</td>";
+echo "<td>object name</td>";
+echo "<td>date</td>";
+echo "<td>status</td>";
+echo "<td>comment</td>";
+echo "</tr>\n";
+
+$result = pg_query($dbconn, "SELECT id, object_name, date, status, maintenance.comment FROM objects INNER JOIN maintenance  USING (id) WHERE model=$model AND (status='Broken' OR status='Problem');");
+while ($row=pg_fetch_assoc($result)) {
+	echo "<tr class=\"rundbrun\">";
+	echo "<td><a href=\"object.php?object='{$row['id']}'\">{$row['id']}</a></td>";
+	echo "<td>{$row['object_name']}</td>";
+	echo "<td>{$row['date']}</td>";
+	echo "<td>{$row['status']}</td>";
+	echo "<td>{$row['comment']}</td>";
+	echo "</tr>\n";
+ }
+echo "</table>\n";
+
+
+
 echo "</div>";
 page_foot();
 ?>

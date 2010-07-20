@@ -1,0 +1,12 @@
+<img src="floorplan_area.png" width="981" height="584" border="0" usemap="#map" />
+
+<map name="map">
+<!-- #$-:Image map file created by GIMP Image Map plug-in -->
+<!-- #$-:GIMP Image Map plug-in by Maurits Rijk -->
+<!-- #$-:Please do not edit lines starting with "#$" -->
+<!-- #$VERSION:2.3 -->
+<!-- #$AUTHOR:Juergen Hannappel -->
+<area shape="poly" coords="767,93,819,83,826,123,774,132" alt="Electrical Power Dsitribution" href="location.php?location=106" />
+<area shape="poly" coords="644,112,697,104,702,145,650,154" alt="Rack 8" href="location.php?location=107" />
+<area shape="poly" coords="332,399,371,399,372,453,331,453" alt="SciFi2/Momo Electronics" href="location.php?location=112" />
+</map>
