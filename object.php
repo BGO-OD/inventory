@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$query.="'". $_POST['date'] . "', ";
 		$query.="'". $_POST['responsible'] . "', ";
 		$query.="'". $_POST['status'] . "', ";
-		$query.="'". $_POST['comment'] . "');";
+		$query.="'". $_POST['maint_comment'] . "');";
 		$result=pg_query($dbconn,$query);
 		break;
 	case 'update object_name':
@@ -108,9 +108,11 @@ echo "<tr><td>User</td>       <td>";
 select_user($dbconn,$row['username']);
 echo "Comment: <input type=\"text\" name=\"usage_comment\" size=40 value=\"${row['usage_comment']}\">";
 echo "</td><td><button name=\"submit\" type=\"submit\" value=\"update_user\" >Update</button></td></tr>\n";
+
 echo "<tr><td>object comment</td>";
 echo "<td><input type=\"text\" name=\"comment\" size=60 value=\"${row['comment']}\"></td>\n";
 echo "<td><button name=\"submit\" type=\"submit\" value=\"update comment\" >Update</button></td></tr>\n";
+
 echo "<tr><td>serial number</td>";
 echo "<td><input type=\"text\" name=\"serial\" size=60 value=\"${row['serial']}\"></td>\n";
 echo "<td><button name=\"submit\" type=\"submit\" value=\"update serial\" >Update</button></td></tr>\n";
@@ -143,7 +145,7 @@ echo "Type: <SELECT name=\"status\">\n";
 		echo "<OPTION>$state</OPTION>\n";
 	}
 echo "</SELECT><br>\n";
-echo "comment: <input type=\"text\" name=\"comment\" size=\"60\" value=\"\"><br>";
+echo "comment: <input type=\"text\" name=\"maint_comment\" size=\"60\" value=\"\"><br>";
 echo "<button name=\"submit\" type=\"submit\" value=\"maintain\" >Enter maintenance data</button><br>\n";
 echo "</form>";
 
