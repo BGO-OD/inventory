@@ -62,14 +62,14 @@ if ($condition=="") {
 	$result = pg_query($dbconn, "SELECT * FROM models $condition;");
 	while ($row=pg_fetch_assoc($result)) {
 		echo "<tr class=\"rundbrun\">";
-		echo "<td>".$row['model']."</td>";
-		echo "<td>".$row['type']."</td>";
-		echo "<td>".$row['manufacturer']."</td>";
-		echo "<td>".$row['name']."</td>";
-		echo "<td>".$row['maintenance_interval']."</td>";
-		echo "<td>".$row['sublocations']."</td>";
-		echo "<td>".$row['description']."</td>";
-		echo "<td>".$row['comment']."</td>";
+		echo "<td><a href=\"model.php?model={$row['model']}\">{$row['model']}</a></td>";
+		echo "<td>{$row['type']}</td>";
+		echo "<td>{$row['manufacturer']}</td>";
+		echo "<td>{$row['name']}</td>";
+		echo "<td>{$row['maintenance_interval']}</td>";
+		echo "<td>{$row['sublocations']}</td>";
+		echo "<td>{$row['description']}</td>";
+		echo "<td>{$row['comment']}</td>";
 		echo "</tr>\n";
 	}
 	echo "</table>\n";

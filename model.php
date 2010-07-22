@@ -13,36 +13,70 @@ if (!$dbconn) {
 };
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+ switch ($_POST['submit']) {
+	case 'update maintenance_interval':
+	case 'update comment':
+	case 'update maintenance_instructions':
+	case 'update sublocations':
+	case 'update description':
+		$submitparts=explode(" ",$_POST['submit']);
+		$field=$submitparts[1];
+		$query="UPDATE objects SET $field='{$_POST[$field]}' WHERE id=$object;";
+		$result=pg_query($dbconn,$query);
+		break;
  }
+}
 
-echo '<div id=content><h1>Models</h1>';
-echo "<table class=\"rundbtable\">\n";
-
-echo "<tr class=\"rundbhead\">";
-echo "<td>model</td>";
-echo "<td>type</td>";
-echo "<td>manufacturer</td>";
-echo "<td>model name</td>";
-echo "<td>maintenance_interval</td>";
-echo "<td>sublocations</td>";
-echo "<td>description</td>";
-echo "<td>comment</td>";
-echo "</tr>\n";
+echo "<div id=content><h1>Model $model</h1>\n";
 
 $result = pg_query($dbconn, "SELECT * FROM models WHERE model=$model;");
-while ($row=pg_fetch_assoc($result)) {
-	echo "<tr class=\"rundbrun\">";
-	echo "<td>".$row['model']."</td>";
-	echo "<td>".$row['type']."</td>";
-	echo "<td>".$row['manufacturer']."</td>";
-	echo "<td>".$row['name']."</td>";
-	echo "<td>".$row['maintenance_interval']."</td>";
-	echo "<td>".$row['sublocations']."</td>";
-	echo "<td>".$row['description']."</td>";
-	echo "<td>".$row['comment']."</td>";
-	echo "</tr>\n";
- }
+$row=pg_fetch_assoc($result);
+
+echo "<form action=\"model.php?model=$model\" method=\"POST\">\n";
+echo "<table class=\"rundbtable\">\n";
+
+echo "<tr><td>model id</td>";
+echo "<td>{$row['model']}</td>";
+echo "<td></td></tr>\n"; 
+
+
+echo "<tr><td>type</td>";
+echo "<td><a href=\"models.php?condition=type='".$row['type']."'\">".$row['type']."</a></td>";
+echo "<td></td></tr>\n"; 
+
+echo "<tr><td>manufacturer</td>";
+echo "<td><a href=\"models.php?condition=manufacturer='".$row['manufacturer']."'\">".$row['manufacturer']."</a></td>";
+echo "<td></td></tr>\n"; 
+
+echo "<tr><td>model</td>";
+echo "<td><a href=\"model.php?model=".$row['model']."\">".$row['name']."</a></td>";
+echo "<td></td></tr>\n"; 
+
+echo "<tr><td>maintenence interval</td>";
+echo "<td><input type=\"text\" name=\"maintenance_interval\" size=30 value=\"${row['maintenance_interval']}\"></td>\n";
+echo "<td><button name=\"submit\" type=\"submit\" value=\"update maintenance_interval\" >Update</button></td></tr>\n";
+
+echo "<tr><td>maintenence instructions</td>";
+echo "<td><input type=\"text\" name=\"maintenance_interval\" size=60 value=\"${row['maintenance_interval']}\"></td>\n";
+echo "<td><button name=\"submit\" type=\"submit\" value=\"update maintenance_interval\" >Update</button></td></tr>\n";
+
+echo "<tr><td>comment</td>";
+echo "<td><input type=\"text\" name=\"comment\" size=60 value=\"${row['comment']}\"></td>\n";
+echo "<td><button name=\"submit\" type=\"submit\" value=\"update comment\" >Update</button></td></tr>\n";
+
+echo "<tr><td>sublocations</td>";
+echo "<td><input type=\"text\" name=\"sublocations\" size=60 value=\"${row['sublocations']}\"></td>\n";
+echo "<td><button name=\"submit\" type=\"submit\" value=\"update sublocations\" >Update</button></td></tr>\n";
+
+echo "<tr><td>description</td>";
+echo "<td><input type=\"text\" name=\"description\" size=60 value=\"${row['description']}\"></td>\n";
+echo "<td><button name=\"submit\" type=\"submit\" value=\"update description\" >Update</button></td></tr>\n";
+
+
+
 echo "</table>\n";
+echo "</form>\n";
+
 
 
 echo '<h2>Objects </h2>';
