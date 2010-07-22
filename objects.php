@@ -127,6 +127,7 @@ if ($condition=="") {
 	if (strpos($condition,"type")!==FALSE) {
 		$condparts=explode("'",$condition);
 		$type=$condparts[1];
+		
 		echo "<h2>Add new $type</h2>\n";
 		echo "<form action=\"objects.php\" method=\"post\">";
 		echo "Type: <SELECT name=\"model\">\n";

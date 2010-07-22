@@ -80,7 +80,7 @@ echo "<tr><td>manufacturer</td>";
 echo "<td><a href=\"models.php?condition=manufacturer='".$row['manufacturer']."'\">".$row['manufacturer']."</a></td>";
 echo "<td></td></tr>\n"; 
 
-echo "<tr><td>manufacturer</td>";
+echo "<tr><td>model</td>";
 echo "<td><a href=\"model.php?model=".$row['model']."\">".$row['name']."</a></td>";
 echo "<td></td></tr>\n"; 
 		
