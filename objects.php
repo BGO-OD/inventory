@@ -39,9 +39,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 	}
 
-	$query="INSERT INTO objects (ownerid,added,model,serial,location,institute_inventory_number,order_number,object_name,comment) VALUES (";
+	if ($_POST['added']=="") {
+		$query="INSERT INTO objects (ownerid,model,serial,location,institute_inventory_number,order_number,object_name,comment) VALUES (";
+	} else {
+		$query="INSERT INTO objects (added,ownerid,model,serial,location,institute_inventory_number,order_number,object_name,comment) VALUES (";
+		$query.="'{$_POST['added']}', ";
+	}
 	$query.="'{$_POST['ownerid']}', ";
-	$query.="'{$_POST['added']}', ";
 	$query.="{$_POST['model']}, ";
 	$query.="'{$_POST['serial']}', ";
 	$query.="$location, ";
