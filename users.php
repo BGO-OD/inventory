@@ -24,7 +24,7 @@ echo "<td>user id</td>";
 echo "<td>name</td>";
 echo "</tr>\n";
 
-$result = pg_query($dbconn, "SELECT * FROM users;");
+$result = pg_query($dbconn, "SELECT * FROM users ORDER BY split_part(name,' ',2);");
 while ($row=pg_fetch_assoc($result)) {
 	echo "<tr class=\"rundbrun\">";
 	echo "<td>{$row['userid']}</td>";

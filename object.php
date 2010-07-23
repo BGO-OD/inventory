@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		break;
 	case 'update object_name':
 	case 'update comment':
+	case 'update added':
 	case 'update serial':
 	case 'update ownerid':
 	case 'update institute_inventory_number':
@@ -61,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 echo "<div id=content><h1>Object $object<img src=\"barcode.php?number=$object\"></h1>";
 
-$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,object_name,usage.comment as usage_comment,institute_inventory_number,order_number,sublocations,owner_name FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid,comment FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id))   LEFT OUTER JOIN owners USING (ownerid) WHERE id=$object;");
+$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,object_name,usage.comment as usage_comment,institute_inventory_number,order_number,sublocations,owner_name,added FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid,comment FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id))   LEFT OUTER JOIN owners USING (ownerid) WHERE id=$object;");
 $row=pg_fetch_assoc($result);
 
 echo "<form action=\"object.php?object=$object\" method=\"POST\">";
@@ -88,6 +89,10 @@ echo "<td></td></tr>\n";
 echo "<tr><td>object name</td>";
 echo "<td><input type=\"text\" name=\"object_name\" size=60 value=\"${row['object_name']}\"></td>\n";
 echo "<td><button name=\"submit\" type=\"submit\" value=\"update object_name\" >Update</button></td></tr>\n";
+
+echo "<tr><td>Add date</td>";
+echo "<td><input type=\"text\" name=\"added\" size=60 value=\"${row['added']}\"></td>\n";
+echo "<td><button name=\"submit\" type=\"submit\" value=\"update added\" >Update</button></td></tr>\n";
 
 if ($row['sublocations']!="") {
 	echo "<tr><td rowspan=\"3\">location</td>   <td rowspan=\"3\">".get_location($dbconn,$row['location'])." ";
@@ -139,7 +144,9 @@ $row=pg_fetch_assoc($result);
 echo "Next maintenance: ".$row['next_maintenance']."<br>\n";
 echo "<form action=\"object.php?object=$object\" method=\"post\">";
 echo "date: <input type=\"text\" name=\"date\" size=\"20\" value=\"now\"><br>";
-echo "responsible: <input type=\"text\" name=\"responsible\" size=\"20\" value=\"\"><br>";
+echo "responsible:";
+select_user($dbconn,"",'responsible');
+echo "<br>";
 echo "Type: <SELECT name=\"status\">\n";
 	foreach ($maintenance_states as $state) {
 		echo "<OPTION>$state</OPTION>\n";
@@ -158,11 +165,11 @@ echo "<td>status</td>";
 echo "<td>comment</td>";
 echo "</tr>\n";
 
-$result = pg_query($dbconn, "SELECT * FROM maintenance WHERE id=$object ORDER BY date DESC;");
+$result = pg_query($dbconn, "SELECT * FROM maintenance LEFT OUTER JOIN users ON maintenance.responsible=users.userid WHERE id=$object ORDER BY date DESC;");
 while ($row=pg_fetch_assoc($result)) {
 	echo "<tr class=\"rundbrun\">";
 	echo "<td>".$row['date']."</td>";
-	echo "<td>".$row['responsible']."</td>";
+	echo "<td>".$row['name']."</td>";
 	echo "<td>".$row['status']."</td>";
 	echo "<td>".$row['comment']."</td>";
 	echo "</tr>\n";

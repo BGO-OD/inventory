@@ -51,7 +51,7 @@ echo "<td>serial</td>";
 echo "<td>object name</td>";
 echo "<td>comment</td>";
 echo "</tr>\n";
-$result = pg_query($dbconn, "SELECT id,type,manufacturer,model,model.name,object_name,serial,objects.comment FROM locations INNER JOIN (objects INNER JOIN models USING (model)) USING (location) WHERE location=$location;");
+$result = pg_query($dbconn, "SELECT id,models.type,manufacturer,model,models.name,object_name,serial,objects.comment FROM locations INNER JOIN (objects INNER JOIN models USING (model)) USING (location) WHERE location=$location;");
 while ($row=pg_fetch_assoc($result)) {
 	echo "<tr class=\"rundbrun\">";
 	echo "<td><a href=\"object.php?object='".$row['id']."'\">".$row['id']."</a></td>";

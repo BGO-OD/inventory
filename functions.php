@@ -103,10 +103,10 @@ function select_location($dbconn) {
 	echo "</SELECT></SPAN>";
 }
 
-function select_user($dbconn,$olduser="") {
-	$result = pg_query($dbconn, "SELECT userid,name FROM users;");
+function select_user($dbconn,$olduser="",$inputname="userid") {
+	$result = pg_query($dbconn, "SELECT userid,name FROM users ORDER BY split_part(name,' ',2);");
 	
-	echo "<SELECT name=\"userid\">\n";
+	echo "<SELECT name=\"$inputname\">\n";
 	if ($olduser=="") {
 		$sel="selected";
 	} else {
