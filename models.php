@@ -6,7 +6,7 @@ include 'variables.php';
 
 $typesel="";
 if (isset($_GET['condition'])) {
-	$cond=$_GET['condition'];
+	$cond="condition=".$_GET['condition'];
 	$condition=" WHERE ".$_GET['condition'];
 	if (strpos($condition,"type")!==FALSE) {
 		$condparts=explode("'",$condition);
