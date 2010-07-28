@@ -31,13 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$modeldata=pg_fetch_assoc($result);
 	$condition=" WHERE type='{$modeldata['type']}'";
 
-	if ($modeldata['sublocations']!="") {
-		if ($locdata['type']!="Crate") {
-			$result = pg_query($dbconn,"INSERT INTO locations (type,location_name,parent_location) VALUES ('Crate',(select count(*)+1 as ncrates FROM locations WHERE parent_location = $location AND type='Crate'),$location) RETURNING location;");
-			$row=pg_fetch_assoc($result);
-			$location=$row['location'];
-		}
-	}
 
 	if ($_POST['added']=="") {
 		$query="INSERT INTO objects (ownerid,model,serial,location,institute_inventory_number,order_number,object_name,comment) VALUES (";
@@ -52,10 +45,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$query.="'{$_POST['institute_inventory_number']}', ";
 	$query.="'{$_POST['order_number']}', ";
 	$query.="'{$_POST['object_name']}', ";
-	$query.="'{$_POST['comment']}');";
+	$query.="'{$_POST['comment']}') RETURNING id;";
 	$result=pg_query($dbconn,$query);
+	$row=pg_fetch_assoc($result);
+	$id=$row['id'];
 
 	if ($modeldata['sublocations']!="") {
+		if (strpos($modeldata['type'],'Crate')===FALSE) {
+			$loctype='Module';
+		} else {
+			$loctype='Crate';
+		}
+		$locname=$modeldata['type']." $id";
+		$result = pg_query($dbconn,"INSERT INTO locations (type,location_name,parent_location) VALUES ('$loctype','$locname',$location) RETURNING location;");
+		$row=pg_fetch_assoc($result);
+		$sublocation_parent=$row['location'];
+
 		if ($modeldata['sublocations']=="individual") {
 		} else {
 			$sublocs=explode(",",$modeldata['sublocations']);
@@ -66,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					for ($j=0; $j<count($parts); $j++) {
 						$name.=$parts[$j]." ";
 					}
-					create_sublocation($dbconn,$parts[count($parts)-1],$name,$location);
+					create_sublocation($dbconn,$parts[count($parts)-1],$name,$sublocation_parent);
 				} else {
 					$fromto=explode("-",$parts[0]);
 					for ($i=$fromto[0]; $i<=$fromto[1]; $i++) {
@@ -75,11 +80,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							$name.=$parts[$j]." ";
 						}
 						$name.=$i;
-						create_sublocation($dbconn,$parts[count($parts)-1],$name,$location);
+						create_sublocation($dbconn,$parts[count($parts)-1],$name,$sublocation_parent);
 					}
 				}
 			}
 		}
+		pg_query($dbconn,"UPDATE objects SET sublocations_parentlocation=$sublocation_parent WHERE id=$id;");
 	}
  }
 
