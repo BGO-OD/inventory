@@ -75,7 +75,7 @@ if ($condition=="") {
 	echo "</table>\n";
 	
 	echo "<h1>Add new model</h1>\n";
-	echo "<form action=\"models.php?$cond'\" method=\"post\">";
+	echo "<form action=\"models.php?$cond\" method=\"post\">";
 	echo "Type: <SELECT name=\"type\">\n";
 	foreach ($model_types as $type) {
 		if ($typesel==$type) {
