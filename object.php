@@ -45,17 +45,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		break;
 	case 'update location':
 	case 'update location empty':
-		$result = pg_query($dbconn,"SELECT location,sublocations FROM objects INNER JOIN models  USING (model) WHERE id=$object;");
+		$result = pg_query($dbconn,"SELECT sublocations_parentlocation FROM objects WHERE id=$object;");
 		$row=pg_fetch_assoc($result);
-		$old_location=$row['location'];
-		$submitparts=explode(" ",$_POST['submit']);
-		switch ($submitparts[2]) {
-		case 'empty':
-		case 'full':
-		case 'basic':
-			$query="UPDATE objects SET location='{$_POST['location']}' WHERE id=$object;";
-			$result=pg_query($dbconn,$query);
-		}
+		if ($row['sublocations_parentlocation']!="") {
+			$query="UPDATE locations SET parent_location='{$_POST['location']}' WHERE location={$row['sublocations_parentlocation']};";
+		};
+		$query="UPDATE objects SET location='{$_POST['location']}' WHERE id=$object;";
+		$result=pg_query($dbconn,$query);
 		break;
 	case 'update_user':
 		$query="UPDATE usage SET validto='now()' WHERE id=$object AND validto='infinity';";
@@ -69,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 echo "<div id=content><h1>Object $object<img src=\"barcode.php?number=$object\"></h1>";
 
-$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,object_name,usage.comment as usage_comment,institute_inventory_number,order_number,sublocations,owner_name,added,next_maintenance FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid,comment FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id))   LEFT OUTER JOIN owners USING (ownerid) WHERE id=$object;");
+$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,object_name,usage.comment as usage_comment,institute_inventory_number,order_number,sublocations,owner_name,added,next_maintenance,sublocations_parentlocation FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid,comment FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id))   LEFT OUTER JOIN owners USING (ownerid) WHERE id=$object;");
 $row=pg_fetch_assoc($result);
 
 echo "<form action=\"object.php?object=$object\" method=\"POST\">";
@@ -105,22 +101,11 @@ echo "<tr><td>Next Maintenance</td>";
 echo "<td><input type=\"text\" name=\"next_maintenance\" size=60 value=\"${row['next_maintenance']}\"></td>\n";
 echo "<td><button name=\"submit\" type=\"submit\" value=\"update next_maintenance\" >Update</button></td></tr>\n";
 
-
-if ($row['sublocations']!="") {
-	echo "<tr><td rowspan=\"3\">location</td>   <td rowspan=\"3\">".get_location($dbconn,$row['location'])." ";
- } else {
-	echo "<tr><td>location</td>   <td>".get_location($dbconn,$row['location'])." ";
- }
-
+echo "<tr><td>location</td>   <td>".get_location($dbconn,$row['location'])." ";
 select_location($dbconn);
 echo "</td>";
-if ($row['sublocations']!="") {
-	echo "<td><button name=\"submit\" type=\"submit\" value=\"update location empty\" >Move without content</button></td></tr>\n";
-	echo "<td><button name=\"submit\" type=\"submit\" value=\"update location full\" >Move with all content</button></td></tr>\n";
-	echo "<td><button name=\"submit\" type=\"submit\" value=\"update location basic\" >Move with power/fan</button></td></tr>\n";
- } else {
-	echo "<td><button name=\"submit\" type=\"submit\" value=\"update location empty\" >Move</button></td></tr>\n";
- }
+echo "<td><button name=\"submit\" type=\"submit\" value=\"update location\" >Move</button></td></tr>\n";
+
 echo "<tr><td>User</td>       <td>";
 select_user($dbconn,$row['username']);
 echo "Comment: <input type=\"text\" name=\"usage_comment\" size=40 value=\"${row['usage_comment']}\">";
@@ -147,6 +132,7 @@ echo "<td><button name=\"submit\" type=\"submit\" value=\"update order_number\" 
 
 echo "</table>\n";
 
+$sublocations_parentlocation=$row['sublocations_parentlocation'];
 
 
 echo '<h2>Maintenances</h2>';
@@ -207,6 +193,36 @@ while ($row=pg_fetch_assoc($result)) {
 	echo "</tr>\n";
  }
 echo "</table>\n";
+
+
+if ($sublocations_parentlocation!="") {
+	echo "<h2>Sub-Locations</h2>";
+	echo "<table class=\"rundbtable\">\n";
+	echo "<tr class=\"rundbhead\">";
+	echo "<td>id</td>";
+	echo "<td>location</td>";
+	echo "<td>type</td>";
+	echo "<td>comment</td>";
+	echo "<td>type</td>";
+	echo "<td>manufacturer</td>";
+	echo "<td>model name</td>";
+	echo "<td>id</td>";
+	echo "</tr>\n";
+	$result = pg_query($dbconn, "SELECT location,locations.type AS loctype ,locations.comment,models.type AS modtype ,manufacturer,name,id FROM locations LEFT OUTER JOIN (objects INNER JOIN models USING (model)) USING (location) WHERE parent_location=$sublocations_parentlocation ORDER BY location;");
+	while ($row=pg_fetch_assoc($result)) {
+		echo "<tr class=\"rundbrun\">";
+		echo "<td><a href=\"location.php?location={$row['location']}\">{$row['location']}</a></td>";
+		echo "<td>".get_location($dbconn,$row['location'])."</td>";
+		echo "<td><a href=\"locations.php?condition=type='{$row['loctype']}'\">{$row['loctype']}</a></td>";
+		echo "<td>".$row['comment']."</td>";
+		echo "<td>".$row['modtype']."</td>";
+		echo "<td>".$row['manufacturer']."</td>";
+		echo "<td>".$row['name']."</td>";
+		echo "<td><a href=\"object.php?object='".$row['id']."'\">".$row['id']."</a></td>";
+		echo "</tr>\n";
+	}
+	echo "</table>\n";
+ }
 
 echo "</div>";
 page_foot();
