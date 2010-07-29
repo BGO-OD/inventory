@@ -5,8 +5,15 @@
 <!-- #$-:GIMP Image Map plug-in by Maurits Rijk -->
 <!-- #$-:Please do not edit lines starting with "#$" -->
 <!-- #$VERSION:2.3 -->
-<!-- #$AUTHOR:Juergen Hannappel -->
+<!-- #$AUTHOR:Juergen Hannappel  -->
 <area shape="poly" coords="767,93,819,83,826,123,774,132" alt="Electrical Power Dsitribution" href="location.php?location=106" />
-<area shape="poly" coords="644,112,697,104,702,145,650,154" alt="Rack 8" href="location.php?location=107" />
-<area shape="poly" coords="332,399,371,399,372,453,331,453" alt="SciFi2/Momo Electronics" href="location.php?location=112" />
+<area shape="poly" coords="644,112,697,104,702,145,650,154" alt="Rack 8" href="location.php?location=192" />
+<area shape="poly" coords="332,399,371,399,372,453,331,453" alt="SciFi2/Momo Electronics" href="location.php?location=209" />
+<area shape="poly" coords="650,154,655,192,711,182,703,146" alt="Rack 9" href="location.php?location=203" />
+<area shape="poly" coords="657,193,663,232,716,221,711,183" alt="Rack 10" href="location.php?location=204" />
+<area shape="poly" coords="664,232,670,271,721,262,716,223" alt="Rack 11" href="location.php?location=205" />
+<area shape="poly" coords="672,272,677,310,729,299,721,264" alt="Rack 12" href="location.php?location=206" />
+<area shape="poly" coords="677,311,684,348,735,338,730,300" alt="Rack 13" href="location.php?location=207" />
+<area shape="poly" coords="684,349,689,388,744,375,735,338" alt="Rack 14" href="location.php?location=208" />
+<area shape="rect" coords="231,60,283,99" alt="DC-Gassystem Rack" href="location.php?location=191" />
 </map>

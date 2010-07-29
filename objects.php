@@ -25,9 +25,6 @@ if (!$dbconn) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$location=$_POST['location'];
-	$result=pg_query($dbconn,"SELECT * FROM locations WHERE location=$location;");
-	$locdata=pg_fetch_assoc($result);
-
   $result=pg_query($dbconn,"SELECT * FROM models WHERE model={$_POST['model']};");
 	$modeldata=pg_fetch_assoc($result);
 	$condition=" WHERE type='{$modeldata['type']}'";
@@ -48,54 +45,73 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$query.="'{$_POST['object_name']}', ";
 	$query.="'{$_POST['comment']}') RETURNING id;";
 	$result=pg_query($dbconn,$query);
-	$row=pg_fetch_assoc($result);
-	$id=$row['id'];
-
-	if ($modeldata['sublocations']!="") {
-		if (strpos($modeldata['type'],'Crate')===FALSE) {
-			$loctype='Module';
-		} else {
-			$loctype='Crate';
-		}
-		$locname=$modeldata['type']." $id";
-		$result = pg_query($dbconn,"INSERT INTO locations (type,location_name,parent_location) VALUES ('$loctype','$locname',$location) RETURNING location;");
+	if (pg_num_rows($result)==1) {
 		$row=pg_fetch_assoc($result);
-		$sublocation_parent=$row['location'];
-
-		if ($modeldata['sublocations']=="individual") {
-		} else {
-			$sublocs=explode(",",$modeldata['sublocations']);
-			foreach ($sublocs as $subloc) {
-				$parts=explode(" ",ltrim($subloc));
-				if (strpos($parts[0],"-")===FALSE) {
-					$name="";
-					for ($j=0; $j<count($parts); $j++) {
-						$name.=$parts[$j]." ";
-					}
-					create_sublocation($dbconn,$parts[count($parts)-1],$name,$sublocation_parent);
-				} else {
-					$fromto=explode("-",$parts[0]);
-					for ($i=$fromto[0]; $i<=$fromto[1]; $i++) {
+		$id=$row['id'];
+		
+		if ($modeldata['sublocations']!="") {
+			if (strpos($modeldata['type'],'Crate')!==FALSE) {
+				$loctype='Crate';
+			}	else if (strpos($modeldata['type'],'Rack')!==FALSE) {
+				$loctype='Rack';
+			} else {
+				$loctype='Module';
+			}
+			
+			if ($_POST['object_name']!="") {
+				$locname=$modeldata['type']." ".$_POST['object_name'];
+			} else {
+				$locname=$modeldata['type']." $id";
+			}
+			$result = pg_query($dbconn,"INSERT INTO locations (type,location_name,parent_location) VALUES ('$loctype','$locname',$location) RETURNING location;");
+			$row=pg_fetch_assoc($result);
+			$sublocation_parent=$row['location'];
+			
+			if ($modeldata['sublocations']=="individual") {
+			} else {
+				$sublocs=explode(",",$modeldata['sublocations']);
+				foreach ($sublocs as $subloc) {
+					$parts=explode(" ",ltrim($subloc));
+					if (strpos($parts[0],"-")===FALSE) {
 						$name="";
-						for ($j=1; $j<count($parts); $j++) {
+						for ($j=0; $j<count($parts); $j++) {
 							$name.=$parts[$j]." ";
 						}
-						$name.=$i;
 						create_sublocation($dbconn,$parts[count($parts)-1],$name,$sublocation_parent);
+					} else {
+						$fromto=explode("-",$parts[0]);
+						for ($i=$fromto[0]; $i<=$fromto[1]; $i++) {
+							$name="";
+							for ($j=1; $j<count($parts); $j++) {
+								$name.=$parts[$j]." ";
+							}
+							$name.=$i;
+							create_sublocation($dbconn,$parts[count($parts)-1],$name,$sublocation_parent);
+						}
 					}
 				}
 			}
+			pg_query($dbconn,"UPDATE objects SET sublocations_parentlocation=$sublocation_parent WHERE id=$id;");
 		}
-		pg_query($dbconn,"UPDATE objects SET sublocations_parentlocation=$sublocation_parent WHERE id=$id;");
+	} else {
+		echo "<div id=content><h1>Add failed</h1>";
 	}
- }
 
+ }
 
 echo "<div id=content><h1>Objects";
 if (strpos($condition,"type")!==FALSE) {
 	$condparts=explode("'",$condition);
 	$type=$condparts[1];
+	$modelselcond="type='$type'";
 	echo " of type $type";
+ } else {
+	if (strpos($condition,"model")!==FALSE) {
+		$condparts=explode("'",$condition);
+		$model=$condparts[1];
+		$modelselcond="model='$model'";
+	}
+	$type="no type";
  }
 echo "</h1>";
 
@@ -140,38 +156,37 @@ if ($condition=="") {
 	}
 	echo "</table>\n";
 	
-	if (strpos($condition,"type")!==FALSE) {
-		$condparts=explode("'",$condition);
-		$type=$condparts[1];
 		
-		echo "<h2>Add new $type</h2>\n";
-		echo "<form action=\"objects.php\" method=\"post\">";
-		echo "Type: <SELECT name=\"model\">\n";
-		$result = pg_query($dbconn, "SELECT * FROM models WHERE type='$type';");
-		while ($row=pg_fetch_assoc($result)) {
-			echo "<OPTION value=\"{$row['model']}\">{$row['type']} {$row['manufacturer']} {$row['name']}</OPTION>\n";
-		}
-		echo "</SELECT><br>\n";
-		echo "added: <input type=\"text\" name=\"added\" size=\"20\" value=\"\"><br>\n";
-		echo "owner: ";
-		select_owner($dbconn,$row['owner_name']);echo "<br>\n";
-		echo "serial: <input type=\"text\" name=\"serial\" size=\"20\"><br>\n";
-		echo "object_name: <input type=\"text\" name=\"object_name\" size=\"20\"><br>\n";
-		echo "Location: ";
-		
-		$result = pg_query($dbconn, "SELECT location FROM objects ORDER BY id DESC LIMIT 1;");
-		while ($row=pg_fetch_assoc($result)) {
-			$last_location=$row['location'];
-		}
-		select_location($last_location);
-		echo "<br/>";
-		echo "institute inventory: <input type=\"text\" name=\"institute_inventory_number\" size=\"60\"  value=\"\"><br>\n";
-		echo "order number: <input type=\"text\" name=\"order_number\" size=\"60\"  value=\"\"><br>\n";
-		echo "comment: <input type=\"text\" name=\"comment\" size=\"60\"  value=\"\"><br>\n";
-		echo '<input type="submit" value="Submit" >';
-		echo "</form>";
+	echo "<h2>Add new Object</h2>\n";
+
+	$result = pg_query($dbconn, "SELECT location,ownerid FROM objects ORDER BY id DESC LIMIT 1;");
+	while ($row=pg_fetch_assoc($result)) {
+		$last_location=$row['location'];
+		$last_owner=$row['ownerid'];
 	}
- }
+
+	echo "<form action=\"objects.php\" method=\"post\">";
+	echo "Type: <SELECT name=\"model\">\n";
+	$result = pg_query($dbconn, "SELECT * FROM models WHERE $modelselcond;");
+	while ($row=pg_fetch_assoc($result)) {
+		echo "<OPTION value=\"{$row['model']}\">{$row['type']} {$row['manufacturer']} {$row['name']}</OPTION>\n";
+	}
+	echo "</SELECT><br>\n";
+	echo "added: <input type=\"text\" name=\"added\" size=\"20\" value=\"\"><br>\n";
+	echo "owner: ";
+	select_owner($dbconn,$last_owner);echo "<br>\n";
+	echo "serial: <input type=\"text\" name=\"serial\" size=\"20\"><br>\n";
+	echo "object_name: <input type=\"text\" name=\"object_name\" size=\"20\"><br>\n";
+	echo "Location: ";
+	
+	select_location($last_location);
+	echo "<br/>";
+	echo "institute inventory: <input type=\"text\" name=\"institute_inventory_number\" size=\"60\"  value=\"\"><br>\n";
+	echo "order number: <input type=\"text\" name=\"order_number\" size=\"60\"  value=\"\"><br>\n";
+	echo "comment: <input type=\"text\" name=\"comment\" size=\"60\"  value=\"\"><br>\n";
+	echo '<input type="submit" value="Submit" >';
+	echo "</form>";
+}
 echo "</div>";
 page_foot();
 ?>

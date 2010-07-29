@@ -105,7 +105,7 @@ function select_owner($dbconn,$oldowner="") {
 	echo "<OPTION $sel value='NULL'>no one</OPTION>\n";
 
 	while ($row=pg_fetch_assoc($result)) {
-		if ($oldowner==$row['owner_name']) {
+		if ($oldowner==$row['ownerid']) {
 			$sel="selected";
 		} else {
 			$sel="";

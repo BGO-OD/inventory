@@ -64,25 +64,30 @@ if ($condition=="") {
 		echo "</tr>\n";
 	}
 	echo "</table>\n";
+
+	$condparts=explode("'",$condition);
+	$type=$condparts[1];
+	if (strpos("Rack,Crate,Module",$type)===FALSE) {
 	
-	echo "<h1>Add new location</h1>\n";
-	echo "<form action=\"locations.php\" method=\"post\">";
-	echo "Type: <SELECT name=\"type\">\n";
-	foreach ($location_types as $type) {
-		if (strpos($condition,$type)===FALSE) {
-			echo "<OPTION>$type</OPTION>\n";
-		} else {
-			echo "<OPTION selected>$type</OPTION>\n";
+		echo "<h1>Add new location</h1>\n";
+		echo "<form action=\"locations.php\" method=\"post\">";
+		echo "Type: <SELECT name=\"type\">\n";
+		foreach ($location_types as $type) {
+			if (strpos($condition,$type)===FALSE) {
+				echo "<OPTION>$type</OPTION>\n";
+			} else {
+				echo "<OPTION selected>$type</OPTION>\n";
+			}
 		}
+		echo "</SELECT><br>\n";
+		echo "name: <input type=\"text\" name=\"location_name\" size=\"20\" value=\"\"><br>\n";
+		echo "parent location: ";
+		select_location();
+		echo "<br>\n";
+		echo "comment: <input type=\"text\" name=\"comment\" size=\"80\" value=\"\"><br>\n";
+		echo "<input type=\"submit\" value=\"Submit\" >\n";
+		echo "</form>";
 	}
-	echo "</SELECT><br>\n";
-	echo "name: <input type=\"text\" name=\"location_name\" size=\"20\" value=\"\"><br>\n";
-	echo "parent location: ";
-	select_location();
-	echo "<br>\n";
-	echo "comment: <input type=\"text\" name=\"comment\" size=\"80\" value=\"\"><br>\n";
-	echo "<input type=\"submit\" value=\"Submit\" >\n";
-	echo "</form>";
 	echo "</div>";
  }
 page_foot();
