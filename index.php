@@ -24,7 +24,7 @@ $dbconn = pg_connect($dbstring);
 if (!$dbconn) {
 	  die('Could not connect: ' . pg_last_error());
  }
-$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,userid,object_name,next_maintenance,maintenance_instructions, FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id)) LEFT OUTER JOIN owners USING (ownerid) WHERE next_maintenance IS NOT NULL ORDER BY next_maintenance LIMIT 10;");
+$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,userid,object_name,next_maintenance,maintenance_instructions FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id)) LEFT OUTER JOIN owners USING (ownerid) WHERE next_maintenance IS NOT NULL ORDER BY next_maintenance LIMIT 10;");
 	echo "<table class=\"rundbtable\">\n";
 	
 	echo "<tr class=\"rundbhead\">";
