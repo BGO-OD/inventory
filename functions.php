@@ -1,4 +1,5 @@
 <?php
+$enable_location_select=false;
 
 function get_location($dbconn,$location,$with_links=TRUE) {
 	$string="";
@@ -34,73 +35,40 @@ function navigation_bar() {
 }
 
 function extra_header_content() {
+	global $enable_location_select;
+	if( $enable_location_select == TRUE ) {
 	echo <<<EOT
 		<script type="text/javascript">
-		var selects=[];
 		var xmlhttp;
+		function reLoad() {
+			var select = document.getElementById("initial_location_selector");
+			select.form.reset();
+		}
+		window.onload = reLoad;
 		function nextSelectLocationBox(caller)
 		{
-			if(selects.length==0) {
-				selects[0]=caller;
-			}
-			var parent_select =0;
-			for (i=selects.length-1;i>=0;i--) {
-				if(selects[i]==caller) {
-					parent_select=i-1;
-					break;
-				}
-				selects[i].parentNode.removeChild(selects[i]);
-				selects.length--;
-			}
 			var option=caller.value;
-			
-			for (i=0; i<selects.length; i++) {
-				selects[i].setAttribute("name","old");
+			var parent_span =caller.parentNode;
+			if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+				xmlhttp=new XMLHttpRequest();
+			} else {// code for IE6, IE5
+				xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 			}
-			
-			if(option !=0) {
-				caller.setAttribute("name","location");
-				
-				if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-					xmlhttp=new XMLHttpRequest();
-				} else {// code for IE6, IE5
-					xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-				}
-				xmlhttp.open("GET","location_serv.php?location="+option,false);
-				xmlhttp.send();
-				if(xmlhttp.responseText != "") {
-					var element = document.createElement("select");
-					element.setAttribute("onChange","javascript: nextSelectLocationBox(this)");
-					element.innerHTML=xmlhttp.responseText;
-					selects[selects.length] = element;
-					var form1 = document.getElementById("selectLocation");
-					form1.appendChild(element);
-				
-				}
-			} else {
-				if(parent_select>=0) {
-					selects[parent_select].setAttribute("name","location");
-				} else {
-					caller.setAttribute("name","location");
-				}
+			xmlhttp.open("GET","location_serv.php?location="+option,false);
+			xmlhttp.send(null);
+			if(xmlhttp.responseText != "") {
+				parent_span.innerHTML=xmlhttp.responseText;
 			}
-	
 		}
 		</script>
 EOT;
+	}
 }
 
-function select_location($dbconn) {
-	$result = pg_query($dbconn, "SELECT location,location_name,type FROM locations WHERE parent_location is NULL ORDER BY location_name;");
-	
-	echo "<SPAN id=\"selectLocation\">";
-	echo "<SELECT name=\"location\" onChange=\"javascript: nextSelectLocationBox(this)\">\n";
-	echo "<OPTION value=0></OPTION>\n";
-	
-	while ($row=pg_fetch_assoc($result)) {
-		echo "<OPTION value={$row['location']}>{$row['type']} {$row['location_name']}</OPTION>\n";
-	}
-	echo "</SELECT></SPAN>";
+function select_location($location="") {
+	echo "<span id=\"selectLocation_container\" class=\"select_location\">";
+	include "http://".$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF'])."/location_serv.php?location=$location";
+	echo "</span>\n";
 }
 
 function select_user($dbconn,$olduser="",$inputname="userid") {

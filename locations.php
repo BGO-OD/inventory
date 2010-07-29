@@ -3,6 +3,8 @@
 include '../common/page_functions.php';
 include 'functions.php';
 include 'variables.php';
+$enable_location_select=true;
+
 
 if (isset($_GET['condition'])) {
 	$condition=" WHERE ".$_GET['condition'];
@@ -76,7 +78,7 @@ if ($condition=="") {
 	echo "</SELECT><br>\n";
 	echo "name: <input type=\"text\" name=\"location_name\" size=\"20\" value=\"\"><br>\n";
 	echo "parent location: ";
-	select_location($dbconn);
+	select_location();
 	echo "<br>\n";
 	echo "comment: <input type=\"text\" name=\"comment\" size=\"80\" value=\"\"><br>\n";
 	echo "<input type=\"submit\" value=\"Submit\" >\n";

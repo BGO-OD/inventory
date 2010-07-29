@@ -3,6 +3,7 @@
 include '../common/page_functions.php';
 include 'functions.php';
 include 'variables.php';
+$enable_location_select=true;
 
 if (isset($_GET['condition'])) {
 	$condition=" WHERE ".$_GET['condition'];
@@ -157,7 +158,12 @@ if ($condition=="") {
 		echo "serial: <input type=\"text\" name=\"serial\" size=\"20\"><br>\n";
 		echo "object_name: <input type=\"text\" name=\"object_name\" size=\"20\"><br>\n";
 		echo "Location: ";
-		select_location($dbconn);
+		
+		$result = pg_query($dbconn, "SELECT location FROM objects ORDER BY id DESC LIMIT 1;");
+		while ($row=pg_fetch_assoc($result)) {
+			$last_location=$row['location'];
+		}
+		select_location($last_location);
 		echo "<br/>";
 		echo "institute inventory: <input type=\"text\" name=\"institute_inventory_number\" size=\"60\"  value=\"\"><br>\n";
 		echo "order number: <input type=\"text\" name=\"order_number\" size=\"60\"  value=\"\"><br>\n";

@@ -4,6 +4,8 @@ include '../common/page_functions.php';
 include 'functions.php';
 include 'variables.php';
 
+$enable_location_select=true;
+
 
 $object=$_GET['object'];
 
@@ -105,7 +107,7 @@ echo "<tr><td>location</td>";
 echo "<td>".get_location($dbconn,$row['location'])." </td>";
 echo "<td rowspan=2><button name=\"submit\" type=\"submit\" value=\"update location\" >Move</button></td></tr>\n";
 echo "<tr><td>new location</td><td>";
-select_location($dbconn);
+select_location($row['location']);
 echo "</td></tr>";
 
 
