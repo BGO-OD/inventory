@@ -101,10 +101,13 @@ echo "<tr><td>Next Maintenance</td>";
 echo "<td><input type=\"text\" name=\"next_maintenance\" size=60 value=\"${row['next_maintenance']}\"></td>\n";
 echo "<td><button name=\"submit\" type=\"submit\" value=\"update next_maintenance\" >Update</button></td></tr>\n";
 
-echo "<tr><td>location</td>   <td>".get_location($dbconn,$row['location'])." ";
+echo "<tr><td>location</td>";
+echo "<td>".get_location($dbconn,$row['location'])." </td>";
+echo "<td rowspan=2><button name=\"submit\" type=\"submit\" value=\"update location\" >Move</button></td></tr>\n";
+echo "<tr><td>new location</td><td>";
 select_location($dbconn);
-echo "</td>";
-echo "<td><button name=\"submit\" type=\"submit\" value=\"update location\" >Move</button></td></tr>\n";
+echo "</td></tr>";
+
 
 echo "<tr><td>User</td>       <td>";
 select_user($dbconn,$row['username']);

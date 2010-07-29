@@ -102,6 +102,11 @@ if ($condition=="") {
 	foreach ($model_types as $type) {
 		echo "<a href=\"objects.php?condition=type='$type'\">List of ${type}s</a><br>\n";
 	}
+ } else if (strpos("Board,VME Module,HV Module,NIM Module,CAMAC Module",$type)!==FALSE) {
+	$result=pg_query($dbconn,"SELECT * FROM models WHERE type='$type';");
+	while ($row=pg_fetch_assoc($result)) {
+		echo "<a href=\"objects.php?condition=model='{$row['model']}'\">List of {$row['manufacturer']} {$row['name']}</a> {$row['description']}<br>\n";
+	}
  } else {
 	echo "<table class=\"rundbtable\">\n";
 	
