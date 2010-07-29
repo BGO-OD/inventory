@@ -13,7 +13,7 @@ if (!$dbconn) {
 };
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
- switch ($_POST['submit']) {
+	switch ($_POST['submit']) {
 	case 'update maintenance_interval':
 	case 'update comment':
 	case 'update maintenance_instructions':
@@ -21,8 +21,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	case 'update description':
 		$submitparts=explode(" ",$_POST['submit']);
 		$field=$submitparts[1];
-		$query="UPDATE objects SET $field='{$_POST[$field]}' WHERE id=$object;";
+		$query="UPDATE models SET $field='{$_POST[$field]}' WHERE model=$model;";
 		$result=pg_query($dbconn,$query);
+		break;
+	case 'add model_weblink':
+		$result=pg_query($dbconn,"INSERT INTO model_weblinks (model,link,comment) VALUES ($model,'{$_POST['link']}','{$_POST['comment']}'); ");
+		break;
+	case 'update model_weblink':
+		$result=pg_query($dbconn,"UPDATE model_weblinks SET link='{$_POST['link']}',comment='{$_POST['comment']}' WHERE linkid={$_GET['linkid']}; ");
 		break;
  }
 }
@@ -104,8 +110,38 @@ while ($row=pg_fetch_assoc($result)) {
  }
 echo "</table>\n";
 
+echo "<h2>Documentation links</h2>\n";
+$result = pg_query($dbconn,"SELECT * FROM model_weblinks WHERE model=$model;");
+echo "<table class=\"rundbtable\">\n";
+echo "<tr class=\"rundbhead\">";
+echo "<td>id</td>";
+echo "<td>link</td>";
+echo "<td>comment</td>";
+echo "<td></td>";
+echo "</tr>\n";
+while ($row=pg_fetch_assoc($result)) {
+	echo "<tr class=\"rundbrun\">";
+	echo "<form action=\"model.php?model=$model&linkid={$row['linkid']}\" method=\"POST\">\n";
+	echo "<td><a href=\"{$row['link']}\">{$row['linkid']}</a></td>";
+	echo "<td><input type=\"text\" name=\"link\" size=50 value=\"{$row['link']}\"></td>";
+	echo "<td><input type=\"text\" name=\"comment\" size=20 value=\"{$row['comment']}\"></td>";
+	echo "<td><button name=\"submit\" type=\"submit\" value=\"update model_weblink\" >Add</button></td>\n";
+	echo "</form>\n";
+	echo "</tr>\n";
+ }
+echo "<tr class=\"rundbrun\">";
+echo "<form action=\"model.php?model=$model\" method=\"POST\">\n";
+echo "<td></td>";
+echo "<td><input type=\"text\" name=\"link\" size=50 value=\"\"></td>";
+echo "<td><input type=\"text\" name=\"comment\" size=20 value=\"\"></td>";
+echo "<td><button name=\"submit\" type=\"submit\" value=\"add model_weblink\" >Add</button></td>\n";
+echo "</form>\n";
+echo "</tr>\n";
+echo "</table>\n";
 
-echo '<h2>Known problems </h2>';
+
+
+echo "<h2>Known problems </h2>\n";
 echo "<table class=\"rundbtable\">\n";
 
 echo "<tr class=\"rundbhead\">";
