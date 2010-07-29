@@ -46,11 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result=pg_query($dbconn,$query);
 		break;
 	case 'update location':
-	case 'update location empty':
 		$result = pg_query($dbconn,"SELECT sublocations_parentlocation FROM objects WHERE id=$object;");
 		$row=pg_fetch_assoc($result);
 		if ($row['sublocations_parentlocation']!="") {
 			$query="UPDATE locations SET parent_location='{$_POST['location']}' WHERE location={$row['sublocations_parentlocation']};";
+			$result=pg_query($dbconn,$query);
 		};
 		$query="UPDATE objects SET location='{$_POST['location']}' WHERE id=$object;";
 		$result=pg_query($dbconn,$query);
