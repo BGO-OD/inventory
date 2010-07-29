@@ -63,8 +63,8 @@ echo "<td><input type=\"text\" name=\"maintenance_interval\" size=30 value=\"${r
 echo "<td><button name=\"submit\" type=\"submit\" value=\"update maintenance_interval\" >Update</button></td></tr>\n";
 
 echo "<tr><td>maintenence instructions</td>";
-echo "<td><input type=\"text\" name=\"maintenance_interval\" size=60 value=\"${row['maintenance_interval']}\"></td>\n";
-echo "<td><button name=\"submit\" type=\"submit\" value=\"update maintenance_interval\" >Update</button></td></tr>\n";
+echo "<td><input type=\"text\" name=\"maintenance_instructions\" size=60 value=\"${row['maintenance_instructions']}\"></td>\n";
+echo "<td><button name=\"submit\" type=\"submit\" value=\"update maintenance_instructions\" >Update</button></td></tr>\n";
 
 echo "<tr><td>comment</td>";
 echo "<td><input type=\"text\" name=\"comment\" size=60 value=\"${row['comment']}\"></td>\n";
