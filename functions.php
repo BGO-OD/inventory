@@ -31,6 +31,12 @@ function navigation_bar() {
 	echo "<a class=\"navbutton\" href=\"objects.php\">Objects list</a>\n";
 	echo "<a class=\"navbutton\" href=\"users.php\">User list</a>\n";
 	echo "<a class=\"navbutton\" href=\"owners.php\">Owner list</a>\n";
+	echo "<form action=\"object.php\" method=\"get\">";
+	echo "<div id=navsection>";
+	echo "goto Object ";
+	echo "<input type=\"text\" size=\"5\" name=\"object\"/>";
+	echo "</div>\n";
+	echo "</form>";
 	echo "</DIV>\n";
 }
 
