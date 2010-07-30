@@ -9,7 +9,7 @@ $enable_location_select=true;
 
 $object=$_GET['object'];
 
-page_head("Object $object","B1 inventory: Object");
+page_head("B1 inventory","B1 inventory: Object $object");
 $dbconn = pg_connect($dbstring);
 if (!$dbconn) {
 	  die('Could not connect: ' . pg_last_error());
