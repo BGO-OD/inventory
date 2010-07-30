@@ -100,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
  }
 
 echo "<div id=content><h1>Objects";
+$modelselcond="";
 if (strpos($condition,"type")!==FALSE) {
 	$condparts=explode("'",$condition);
 	$type=$condparts[1];
@@ -156,37 +157,38 @@ if ($condition=="") {
 	}
 	echo "</table>\n";
 	
+	if ($modelselcond != "") {
+		echo "<h2>Add new Object</h2>\n";
 		
-	echo "<h2>Add new Object</h2>\n";
-
-	$result = pg_query($dbconn, "SELECT location,ownerid FROM objects ORDER BY id DESC LIMIT 1;");
-	while ($row=pg_fetch_assoc($result)) {
-		$last_location=$row['location'];
-		$last_owner=$row['ownerid'];
+		$result = pg_query($dbconn, "SELECT location,ownerid FROM objects ORDER BY id DESC LIMIT 1;");
+		while ($row=pg_fetch_assoc($result)) {
+			$last_location=$row['location'];
+			$last_owner=$row['ownerid'];
+		}
+		
+		echo "<form action=\"objects.php\" method=\"post\">";
+		echo "Type: <SELECT name=\"model\">\n";
+		$result = pg_query($dbconn, "SELECT * FROM models WHERE $modelselcond;");
+		while ($row=pg_fetch_assoc($result)) {
+			echo "<OPTION value=\"{$row['model']}\">{$row['type']} {$row['manufacturer']} {$row['name']}</OPTION>\n";
+		}
+		echo "</SELECT><br>\n";
+		echo "added: <input type=\"text\" name=\"added\" size=\"20\" value=\"\"><br>\n";
+		echo "owner: ";
+		select_owner($dbconn,$last_owner);echo "<br>\n";
+		echo "serial: <input type=\"text\" name=\"serial\" size=\"20\"><br>\n";
+		echo "object_name: <input type=\"text\" name=\"object_name\" size=\"20\"><br>\n";
+		echo "Location: ";
+		
+		select_location($last_location);
+		echo "<br/>";
+		echo "institute inventory: <input type=\"text\" name=\"institute_inventory_number\" size=\"60\"  value=\"\"><br>\n";
+		echo "order number: <input type=\"text\" name=\"order_number\" size=\"60\"  value=\"\"><br>\n";
+		echo "comment: <input type=\"text\" name=\"comment\" size=\"60\"  value=\"\"><br>\n";
+		echo '<input type="submit" value="Submit" >';
+		echo "</form>";
 	}
-
-	echo "<form action=\"objects.php\" method=\"post\">";
-	echo "Type: <SELECT name=\"model\">\n";
-	$result = pg_query($dbconn, "SELECT * FROM models WHERE $modelselcond;");
-	while ($row=pg_fetch_assoc($result)) {
-		echo "<OPTION value=\"{$row['model']}\">{$row['type']} {$row['manufacturer']} {$row['name']}</OPTION>\n";
-	}
-	echo "</SELECT><br>\n";
-	echo "added: <input type=\"text\" name=\"added\" size=\"20\" value=\"\"><br>\n";
-	echo "owner: ";
-	select_owner($dbconn,$last_owner);echo "<br>\n";
-	echo "serial: <input type=\"text\" name=\"serial\" size=\"20\"><br>\n";
-	echo "object_name: <input type=\"text\" name=\"object_name\" size=\"20\"><br>\n";
-	echo "Location: ";
-	
-	select_location($last_location);
-	echo "<br/>";
-	echo "institute inventory: <input type=\"text\" name=\"institute_inventory_number\" size=\"60\"  value=\"\"><br>\n";
-	echo "order number: <input type=\"text\" name=\"order_number\" size=\"60\"  value=\"\"><br>\n";
-	echo "comment: <input type=\"text\" name=\"comment\" size=\"60\"  value=\"\"><br>\n";
-	echo '<input type="submit" value="Submit" >';
-	echo "</form>";
-}
+ }
 echo "</div>";
 page_foot();
 ?>

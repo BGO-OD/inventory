@@ -67,7 +67,7 @@ EOT;
 
 function select_location($location="") {
 	echo "<span id=\"selectLocation_container\" class=\"select_location\">";
-	include "http://".$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF'])."/location_serv.php?location=$location";
+	include "http://localhost/".dirname($_SERVER['PHP_SELF'])."/location_serv.php?location=$location";
 	echo "</span>\n";
 }
 
