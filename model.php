@@ -110,6 +110,8 @@ while ($row=pg_fetch_assoc($result)) {
  }
 echo "</table>\n";
 
+echo "<a href=\"objects.php?condition=model='$model'\">Create an Object of this kind</a><br>\n";
+
 echo "<h2>Documentation links</h2>\n";
 $result = pg_query($dbconn,"SELECT * FROM model_weblinks WHERE model=$model;");
 echo "<table class=\"rundbtable\">\n";
