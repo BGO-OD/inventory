@@ -73,9 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 echo "<div id=content><h1>Object $object<img src=\"barcode.php?number=$object\"></h1>";
 
-$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,object_name,usage.comment as usage_comment,institute_inventory_number,order_number,sublocations,ownerid,added,next_maintenance,sublocations_parentlocation FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid,comment FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id))   LEFT OUTER JOIN owners USING (ownerid) WHERE id=$object;");
+$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,object_name,usage.comment as usage_comment,institute_inventory_number,order_number,sublocations,ownerid,added,next_maintenance,sublocations_parentlocation,model FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid,comment FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id))   LEFT OUTER JOIN owners USING (ownerid) WHERE id=$object;");
 $row=pg_fetch_assoc($result);
-
+$model=$row['model'];
 echo "<form action=\"object.php?object=$object\" method=\"POST\">";
 
 echo "<table class=\"rundbtable\">\n";
@@ -234,6 +234,22 @@ if ($sublocations_parentlocation!="") {
 	}
 	echo "</table>\n";
  }
+
+echo "<h2>Documentation links</h2>\n";
+$result = pg_query($dbconn,"SELECT * FROM model_weblinks WHERE model=$model;");
+echo "<table class=\"rundbtable\">\n";
+echo "<tr class=\"rundbhead\">";
+echo "<td>link</td>";
+echo "<td>comment</td>";
+echo "</tr>\n";
+while ($row=pg_fetch_assoc($result)) {
+	echo "<tr class=\"rundbrun\">";
+	echo "<form action=\"model.php?model=$model&linkid={$row['linkid']}\" method=\"POST\">\n";
+	echo "<td><a href=\"{$row['link']}\">{$row['link']}</a></td>";
+	echo "<td>{$row['comment']}</td>";
+	echo "</tr>\n";
+ }
+echo "</table>\n";
 
 echo "</div>";
 page_foot();

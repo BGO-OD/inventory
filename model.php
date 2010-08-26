@@ -30,6 +30,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	case 'update model_weblink':
 		$result=pg_query($dbconn,"UPDATE model_weblinks SET link='{$_POST['link']}',comment='{$_POST['comment']}' WHERE linkid={$_GET['linkid']}; ");
 		break;
+	case 'add model_file':
+		pg_query($dbconn, "begin");
+		$oid = pg_lo_import($dbconn,$_FILES['userfile']['tmp_name']);
+		pg_query($dbconn,"INSERT INTO FILES (name,mimetype,file) VALUES ('{$_FILES['userfile']['name']}','{$_FILES['userfile']['type']}',$oid);");
+		$result=pg_query($dbconn,"INSERT INTO model_weblinks (model,link,comment) VALUES ($model,'file.php?oid=$oid','{$_POST['comment']}'); ");
+		pg_query($dbconn, "commit");
+
+		break;
  }
 }
 
@@ -137,6 +145,17 @@ echo "<td></td>";
 echo "<td><input type=\"text\" name=\"link\" size=50 value=\"\"></td>";
 echo "<td><input type=\"text\" name=\"comment\" size=20 value=\"\"></td>";
 echo "<td><button name=\"submit\" type=\"submit\" value=\"add model_weblink\" >Add</button></td>\n";
+echo "</form>\n";
+echo "</tr>\n";
+echo "<tr class=\"rundbrun\">";
+echo "<form enctype=\"multipart/form-data\" action=\"model.php?model=$model\" method=\"POST\">\n";
+echo "    <!-- MAX_FILE_SIZE must precede the file input field -->\n";
+echo "    <input type=\"hidden\" name=\"MAX_FILE_SIZE\" value=\"30000000\" />\n";
+echo "    <!-- Name of input element determines name in $_FILES array -->\n";
+echo "<td></td>";
+echo "<td>file: <input name=\"userfile\" type=\"file\" /></td>\n";
+echo "<td><input type=\"text\" name=\"comment\" size=20 value=\"\"></td>";
+echo "<td><button name=\"submit\" type=\"submit\" value=\"add model_file\" >Add File</button></td>\n";
 echo "</form>\n";
 echo "</tr>\n";
 echo "</table>\n";
