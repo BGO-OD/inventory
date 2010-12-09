@@ -173,7 +173,7 @@ if ($condition=="") {
 			echo "<OPTION value=\"{$row['model']}\">{$row['type']} {$row['manufacturer']} {$row['name']}</OPTION>\n";
 		}
 		echo "</SELECT><br>\n";
-		echo "added: <input type=\"text\" name=\"added\" size=\"20\" value=\"\"><br>\n";
+		echo "added on: <input type=\"text\" name=\"added\" size=\"20\" value=\"\"> YYYY-MM-DD <br>\n";
 		echo "owner: ";
 		select_owner($dbconn,$last_owner);echo "<br>\n";
 		echo "serial: <input type=\"text\" name=\"serial\" size=\"20\"><br>\n";
