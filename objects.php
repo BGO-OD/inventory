@@ -107,11 +107,16 @@ if (strpos($condition,"type")!==FALSE) {
 	$modelselcond="type='$type'";
 	echo " of type $type";
  } else {
-	if (strpos($condition,"model")!==FALSE) {
+	if (strpos($condition,"models.name")!==FALSE) {
+		$condparts=explode("'",$condition);
+		$model=$condparts[1];
+		$modelselcond="models.name='$model'";
+	} else if (strpos($condition,"model")!==FALSE) {
 		$condparts=explode("'",$condition);
 		$model=$condparts[1];
 		$modelselcond="model='$model'";
 	}
+	
 	$type="no type";
  }
 echo "</h1>";
