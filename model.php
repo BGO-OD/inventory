@@ -13,6 +13,10 @@ if (!$dbconn) {
 };
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+	if (isset($_POST['comment'])) {
+		$comment=pg_escape_string($dbc,$_POST['comment']);
+	}
+
 	switch ($_POST['submit']) {
 	case 'update maintenance_interval':
 	case 'update comment':
@@ -25,16 +29,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result=pg_query($dbconn,$query);
 		break;
 	case 'add model_weblink':
-		$result=pg_query($dbconn,"INSERT INTO model_weblinks (model,link,comment) VALUES ($model,'{$_POST['link']}','{$_POST['comment']}'); ");
+		$result=pg_query($dbconn,"INSERT INTO model_weblinks (model,link,comment) VALUES ($model,'{$_POST['link']}','$comment'); ");
 		break;
 	case 'update model_weblink':
-		$result=pg_query($dbconn,"UPDATE model_weblinks SET link='{$_POST['link']}',comment='{$_POST['comment']}' WHERE linkid={$_GET['linkid']}; ");
+		$result=pg_query($dbconn,"UPDATE model_weblinks SET link='{$_POST['link']}',comment='$comment' WHERE linkid={$_GET['linkid']}; ");
 		break;
 	case 'add model_file':
 		pg_query($dbconn, "begin");
 		$oid = pg_lo_import($dbconn,$_FILES['userfile']['tmp_name']);
 		pg_query($dbconn,"INSERT INTO FILES (name,mimetype,file) VALUES ('{$_FILES['userfile']['name']}','{$_FILES['userfile']['type']}',$oid);");
-		$result=pg_query($dbconn,"INSERT INTO model_weblinks (model,link,comment) VALUES ($model,'file.php?oid=$oid','{$_POST['comment']}'); ");
+		$result=pg_query($dbconn,"INSERT INTO model_weblinks (model,link,comment) VALUES ($model,'file.php?oid=$oid','$comment'); ");
 		pg_query($dbconn, "commit");
 
 		break;
