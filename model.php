@@ -14,7 +14,7 @@ if (!$dbconn) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (isset($_POST['comment'])) {
-		$comment=pg_escape_string($dbc,$_POST['comment']);
+		$comment=pg_escape_string($dbconn,$_POST['comment']);
 	}
 
 	switch ($_POST['submit']) {
@@ -139,7 +139,7 @@ while ($row=pg_fetch_assoc($result)) {
 	echo "<td><a href=\"{$row['link']}\">{$row['linkid']}</a></td>";
 	echo "<td><input type=\"text\" name=\"link\" size=50 value=\"{$row['link']}\"></td>";
 	echo "<td><input type=\"text\" name=\"comment\" size=20 value=\"{$row['comment']}\"></td>";
-	echo "<td><button name=\"submit\" type=\"submit\" value=\"update model_weblink\" >Add</button></td>\n";
+	echo "<td><button name=\"submit\" type=\"submit\" value=\"update model_weblink\" >Update</button></td>\n";
 	echo "</form>\n";
 	echo "</tr>\n";
  }

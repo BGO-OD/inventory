@@ -25,18 +25,18 @@ if (!$dbconn) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$query="INSERT INTO models (type,manufacturer,name,maintenance_interval,maintenance_instructions,sublocations,description,comment) VALUES (";
-	$query.="'". $_POST['type'] . "', ";
-	$query.="'". $_POST['manufacturer'] . "', ";
-	$query.="'". $_POST['name'] . "', ";
+	$query.="'". pg_escape_string($_POST['type']) . "', ";
+	$query.="'". pg_escape_string($_POST['manufacturer']) . "', ";
+	$query.="'". pg_escape_string($_POST['name']) . "', ";
 	if ($_POST['maintenance_interval']=="") {
 		$query.="'10 years', ";
 	} else {
-		$query.="'". $_POST['maintenance_interval'] . "', ";
+		$query.="'". pg_escape_string($_POST['maintenance_interval']) . "', ";
 	}
-	$query.="'". $_POST['maintenance_instructions'] . "', ";
-	$query.="'". $_POST['sublocations'] . "', ";
-	$query.="'". $_POST['description'] . "', ";
-	$query.="'". $_POST['comment'] . "');";
+	$query.="'". pg_escape_string($_POST['maintenance_instructions']) . "', ";
+	$query.="'". pg_escape_string($_POST['sublocations']) . "', ";
+	$query.="'". pg_escape_string($_POST['description']) . "', ";
+	$query.="'". pg_escape_string($_POST['comment']) . "');";
 	$result=pg_query($dbconn,$query);
  }
 
@@ -59,7 +59,7 @@ if ($condition=="") {
 	echo "<td>comment</td>";
 	echo "</tr>\n";
 	
-	$result = pg_query($dbconn, "SELECT * FROM models $condition;");
+	$result = pg_query($dbconn, "SELECT * FROM models $condition ORDER BY model DESC;");
 	while ($row=pg_fetch_assoc($result)) {
 		echo "<tr class=\"rundbrun\">";
 		echo "<td><a href=\"model.php?model={$row['model']}\">{$row['model']}</a></td>";

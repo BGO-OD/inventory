@@ -38,12 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
 	$query.="'{$_POST['ownerid']}', ";
 	$query.="{$_POST['model']}, ";
-	$query.="'{$_POST['serial']}', ";
+	$query.="'".pg_escape_string($_POST['serial'])."', ";
 	$query.="$location, ";
-	$query.="'{$_POST['institute_inventory_number']}', ";
-	$query.="'{$_POST['order_number']}', ";
-	$query.="'{$_POST['object_name']}', ";
-	$query.="'{$_POST['comment']}') RETURNING id;";
+	$query.="'".pg_escape_string($_POST['institute_inventory_number'])."', ";
+	$query.="'".pg_escape_string($_POST['order_number'])."', ";
+	$query.="'".pg_escape_string($_POST['object_name']."', ";
+	$query.="'".pg_escape_string($_POST['comment'])."') RETURNING id;";
 	$result=pg_query($dbconn,$query);
 	if (pg_num_rows($result)==1) {
 		$row=pg_fetch_assoc($result);
@@ -145,7 +145,7 @@ if ($condition=="") {
 	echo "<td>comment</td>";
 	echo "</tr>\n";
 	
-	$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,userid,object_name FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id)) LEFT OUTER JOIN owners USING (ownerid) $condition;");
+	$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,userid,object_name FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id)) LEFT OUTER JOIN owners USING (ownerid) $condition ORDER BY id DESC;");
 	while ($row=pg_fetch_assoc($result)) {
 		echo "<tr class=\"rundbrun\">";
 		echo "<td><a href=\"object.php?object='".$row['id']."'\">".$row['id']."</a></td>";
