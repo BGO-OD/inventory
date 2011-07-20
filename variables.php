@@ -1,5 +1,5 @@
 <?php
-include 'access_data.php';
+include '../common/access_data.php';
 $dbstring=$pwdconfiguration['web_inventory_dbstring'];
 
 $location_types=array('City','Building','Room','Rack','Crate','Slot','Cabinet','Module','Box');
