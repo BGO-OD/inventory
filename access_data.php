@@ -1,1 +1,0 @@
-../../libs/config/access_data.php
