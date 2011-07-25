@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$query.="$location, ";
 	$query.="'".pg_escape_string($dbconn,$_POST['institute_inventory_number'])."', ";
 	$query.="'".pg_escape_string($dbconn,$_POST['order_number'])."', ";
-	$query.="'".pg_escape_string($dbconn,$_POST['object_name']."', ";
+	$query.="'".pg_escape_string($dbconn,$_POST['object_name'])."', ";
 	$query.="'".pg_escape_string($dbconn,$_POST['comment'])."') RETURNING id;";
 	$result=pg_query($dbconn,$query);
 	if (pg_num_rows($result)==1) {
