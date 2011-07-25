@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	case 'add model_file':
 		pg_query($dbconn, "begin");
 		$oid = pg_lo_import($dbconn,$_FILES['userfile']['tmp_name']);
-		pg_query($dbconn,"INSERT INTO FILES (name,mimetype,file) VALUES ('{$_FILES['userfile']['name']}','{$_FILES['userfile']['type']}',$oid);");
+		pg_query($dbconn,"INSERT INTO files (file_name,mimetype,file,size) VALUES ('{$_FILES['userfile']['name']}', '{$_FILES['userfile']['type']}', $oid ,'{$_FILES['userfile']['size']}' );");
 		$result=pg_query($dbconn,"INSERT INTO model_weblinks (model,link,comment) VALUES ($model,'file.php?oid=$oid','$comment'); ");
 		pg_query($dbconn, "commit");
 
