@@ -11,6 +11,7 @@ $dbconn = pg_connect($dbstring);
 if (!$dbconn) {
 	  die('Could not connect: ' . pg_last_error());
 };
+echo "<div id=content>";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (isset($_POST['comment'])) {
@@ -29,23 +30,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result=pg_query($dbconn,$query);
 		break;
 	case 'add model_weblink':
-		$result=pg_query($dbconn,"INSERT INTO model_weblinks (model,link,comment) VALUES ($model,'{$_POST['link']}','$comment'); ");
+		if($_POST['link'] != "") {
+			$result=pg_query($dbconn,"INSERT INTO model_weblinks (model,link,comment) VALUES ($model,'{$_POST['link']}','$comment'); ");
+		} else {
+			echo "<h2>Error: empty link</h2>";
+		}
 		break;
 	case 'update model_weblink':
-		$result=pg_query($dbconn,"UPDATE model_weblinks SET link='{$_POST['link']}',comment='$comment' WHERE linkid={$_GET['linkid']}; ");
+		if($_POST['link'] != "") {
+			$result=pg_query($dbconn,"UPDATE model_weblinks SET link='".pg_escape_string($_POST['link'])."',comment='$comment' WHERE linkid=".pg_escape_string($_GET['linkid']).";");
+		} else {
+			echo "<h2>Error: empty link</h2>";
+		}
 		break;
 	case 'add model_file':
-		pg_query($dbconn, "begin");
-		$oid = pg_lo_import($dbconn,$_FILES['userfile']['tmp_name']);
-		pg_query($dbconn,"INSERT INTO files (file_name,mimetype,file,size) VALUES ('{$_FILES['userfile']['name']}', '{$_FILES['userfile']['type']}', $oid ,'{$_FILES['userfile']['size']}' );");
-		$result=pg_query($dbconn,"INSERT INTO model_weblinks (model,link,comment) VALUES ($model,'file.php?oid=$oid','$comment'); ");
-		pg_query($dbconn, "commit");
-
+		if($_FILES['userfile']['error'] == UPLOAD_ERR_OK) {
+			pg_query($dbconn, "begin");
+			$oid = pg_lo_import($dbconn,$_FILES['userfile']['tmp_name']);
+			pg_query($dbconn,"INSERT INTO files (file_name,mimetype,file,size) VALUES ('{$_FILES['userfile']['name']}', '{$_FILES['userfile']['type']}', $oid ,'{$_FILES['userfile']['size']}' );");
+			$result=pg_query($dbconn,"INSERT INTO model_weblinks (model,link,comment) VALUES ($model,'file.php?oid=$oid','$comment'); ");
+			pg_query($dbconn, "commit");
+		} else {
+			echo "<h2>Error uploading file</h2>";
+		}
 		break;
  }
 }
 
-echo "<div id=content><h1>Model $model</h1>\n";
+echo "<h1>Model $model</h1>\n";
 
 $result = pg_query($dbconn, "SELECT * FROM models WHERE model=$model;");
 $row=pg_fetch_assoc($result);
@@ -125,7 +137,7 @@ echo "</table>\n";
 echo "<a href=\"objects.php?condition=model='$model'\">Create an Object of this kind</a><br>\n";
 
 echo "<h2>Documentation links</h2>\n";
-$result = pg_query($dbconn,"SELECT * FROM model_weblinks WHERE model=$model;");
+$result = pg_query($dbconn,"SELECT * FROM model_weblinks WHERE model=$model ORDER BY linkid;");
 echo "<table class=\"rundbtable\">\n";
 echo "<tr class=\"rundbhead\">";
 echo "<td>id</td>";
