@@ -7,5 +7,3 @@ $model_types=array('NIM Crate','NIM Module','VME Crate','VME Module','CAMAC Crat
 $maintenance_states=array('Working','Broken','Problems','Notice');
 
 ?>
-
-
