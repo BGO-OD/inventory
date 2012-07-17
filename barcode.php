@@ -1,5 +1,5 @@
 <?php
-$code=trim($_GET['number'],"'")+5500000;
+$code=trim($_GET['number'],"'");
 header("Content-Type: image/png");
-passthru("barcode -b $code -e ean8 -u in -g 1x0.5 -E | gs -r150 -g200x100 -sOutputFile=- -sDEVICE=pnggray -q -");
+passthru("/bin/bash ./create_label.sh $code | convert -density 150  - -background white -flatten png:-");
 ?>
