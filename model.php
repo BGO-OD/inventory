@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$result=pg_query($dbconn,"INSERT INTO model_weblinks (model,link,comment) VALUES ($model,'file.php?oid=$oid','$comment'); ");
 			pg_query($dbconn, "commit");
 		} else {
-			echo "<h2>Error uploading file</h2>";
+			echo "<h2>Error uploading file. Error Code:" . $_FILES['userfile']['error'] ."</h2>";
 		}
 		break;
  }
