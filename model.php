@@ -127,7 +127,7 @@ while ($row=pg_fetch_assoc($result)) {
 	echo "<td><a href=\"object.php?object='{$row['id']}'\">{$row['id']}</a></td>";
 	echo "<td>{$row['serial']}</td>";
 	echo "<td>{$row['object_name']}</td>";
-	echo "<td>".get_location($dbconn,$row['location'])."</td>";
+	echo "<td>".get_location($dbconn,$row['id'])."</td>";
 	echo "<td><a href=\"objects.php?condition=userid={$row['userid']}\">{$row['username']}</a></td>";
 	echo "<td>{$row['comment']}</td>";
 	echo "</tr>\n";

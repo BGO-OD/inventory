@@ -52,13 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result=pg_query($dbconn,$query);
 		break;
 	case 'update location':
-		$result = pg_query($dbconn,"SELECT sublocations_parentlocation FROM objects WHERE id=$object;");
-		$row=pg_fetch_assoc($result);
-		if ($row['sublocations_parentlocation']!="") {
-			$query="UPDATE locations SET parent_location='{$_POST['location']}' WHERE location={$row['sublocations_parentlocation']};";
-			$result=pg_query($dbconn,$query);
-		};
-		$query="UPDATE objects SET location='{$_POST['location']}' WHERE id=$object;";
+		$query="UPDATE objects SET location='{$_POST['location']}' , location_description='{$_POST['location_description']}' WHERE id=$object;";
 		$result=pg_query($dbconn,$query);
 		break;
 	case 'update_user':
@@ -73,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 echo "<div id=content><h1>Object $object<img src=\"barcode.php?number=$object\"></h1>";
 
-$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,object_name,usage.comment as usage_comment,institute_inventory_number,order_number,sublocations,ownerid,added,next_maintenance,sublocations_parentlocation,model FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid,comment FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id))   LEFT OUTER JOIN owners USING (ownerid) WHERE id=$object;");
+$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,object_name,usage.comment as usage_comment,institute_inventory_number,order_number,sublocations,ownerid,added,next_maintenance FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid,comment FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id))   LEFT OUTER JOIN owners USING (ownerid) WHERE id=$object;");
 $row=pg_fetch_assoc($result);
 $model=$row['model'];
 echo "<form action=\"object.php?object=$object\" method=\"POST\">";
@@ -110,10 +104,10 @@ echo "<td><input type=\"text\" name=\"next_maintenance\" size=60 value=\"${row['
 echo "<td><button name=\"submit\" type=\"submit\" value=\"update next_maintenance\" >Update</button></td></tr>\n";
 
 echo "<tr><td>location</td>";
-echo "<td>".get_location($dbconn,$row['location'])." </td>";
+echo "<td>".get_location($dbconn,$row['id'])." </td>";
 echo "<td rowspan=2><button name=\"submit\" type=\"submit\" value=\"update location\" >Move</button></td></tr>\n";
 echo "<tr><td>new location</td><td>";
-select_location($row['location']);
+select_location($row['id'], $row['location']);
 echo "</td></tr>";
 
 
@@ -143,7 +137,7 @@ echo "<td><button name=\"submit\" type=\"submit\" value=\"update order_number\" 
 
 echo "</table>\n";
 
-$sublocations_parentlocation=$row['sublocations_parentlocation'];
+$sublocations=$row['sublocations'];
 
 
 echo '<h2>Maintenances</h2>';
@@ -206,30 +200,28 @@ while ($row=pg_fetch_assoc($result)) {
 echo "</table>\n";
 
 
-if ($sublocations_parentlocation!="") {
-	echo "<h2>Sub-Locations</h2>";
+if ($sublocations!="") {
+	echo "<h2>Objects at this location</h2>";
 	echo "<table class=\"rundbtable\">\n";
 	echo "<tr class=\"rundbhead\">";
 	echo "<td>id</td>";
-	echo "<td>location</td>";
-	echo "<td>type</td>";
-	echo "<td>comment</td>";
+	echo "<td>loc. desc.</td>";
 	echo "<td>type</td>";
 	echo "<td>manufacturer</td>";
 	echo "<td>model name</td>";
-	echo "<td>id</td>";
+	echo "<td>name</td>";
+	echo "<td>comment</td>";
 	echo "</tr>\n";
-	$result = pg_query($dbconn, "SELECT location,locations.type AS loctype ,locations.comment,models.type AS modtype ,manufacturer,name,id FROM locations LEFT OUTER JOIN (objects INNER JOIN models USING (model)) USING (location) WHERE parent_location=$sublocations_parentlocation ORDER BY location;");
+	$result = pg_query($dbconn, "SELECT id, location_description, type, manufacturer, models.name, object_name, objects.comment FROM objects inner join models using (model)  WHERE location=$object ORDER BY location_description;");
 	while ($row=pg_fetch_assoc($result)) {
 		echo "<tr class=\"rundbrun\">";
-		echo "<td><a href=\"location.php?location={$row['location']}\">{$row['location']}</a></td>";
-		echo "<td>".get_location($dbconn,$row['location'])."</td>";
-		echo "<td><a href=\"locations.php?condition=type='{$row['loctype']}'\">{$row['loctype']}</a></td>";
-		echo "<td>".$row['comment']."</td>";
-		echo "<td>".$row['modtype']."</td>";
+		echo "<td><a href=\"object.php?object=".$row['id']."\">".$row['id']."</a></td>";
+		echo "<td>".$row['location_description']."</td>";
+		echo "<td>".$row['type']."</td>";
 		echo "<td>".$row['manufacturer']."</td>";
 		echo "<td>".$row['name']."</td>";
-		echo "<td><a href=\"object.php?object='".$row['id']."'\">".$row['id']."</a></td>";
+		echo "<td>".$row['object_name']."</td>";
+		echo "<td>".$row['comment']."</td>";
 		echo "</tr>\n";
 	}
 	echo "</table>\n";

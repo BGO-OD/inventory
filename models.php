@@ -42,10 +42,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 echo '<div id=content><h1>Models</h1>';
 if ($condition=="") {
-	foreach ($model_types as $type) {
-		echo "<a href=\"models.php?condition=type='$type'\">List of ${type} types</a><br>\n";
+	$result=pg_query($dbconn,"select type from models group by type order by type;");
+	while ($row=pg_fetch_assoc($result)) {
+		echo "<a href=\"models.php?condition=type='{$row['type']}'\">List of {$row['type']}s</a><br>\n";
 	}
- } else {
+} else {
 	echo "<table class=\"rundbtable\">\n";
 	
 	echo "<tr class=\"rundbhead\">";
@@ -77,13 +78,14 @@ if ($condition=="") {
 	echo "<h1>Add new model</h1>\n";
 	echo "<form action=\"models.php?$cond\" method=\"post\">";
 	echo "Type: <SELECT name=\"type\">\n";
-	foreach ($model_types as $type) {
-		if ($typesel==$type) {
+	$result=pg_query($dbconn,"select type from models group by type order by type;");
+	while ($row=pg_fetch_assoc($result)) {
+		if ($typesel==$row['type']) {
 			$sel="selected";
 		} else {
 			$sel="";
 		}
-		echo "<OPTION $sel>" . $type . "</OPTION>\n";
+		echo "<OPTION $sel>" . $row['type'] . "</OPTION>\n";
 	}
 	echo "</SELECT><br>\n";
 	echo "manufacturer: <input type=\"text\" name=\"manufacturer\" size=\"20\" value=\"\"><br>";

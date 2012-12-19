@@ -49,7 +49,7 @@ $result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,
 		echo "<td><a href=\"model.php?model=".$row['model']."\">".$row['name']."</a></td>";
 		echo "<td>{$row['object_name']}</td>";
 		echo "<td>{$row['serial']}</td>";
-		echo "<td>".get_location($dbconn,$row['location'])."</td>";
+		echo "<td>".get_location($dbconn,$row['id'])."</td>";
 		echo "<td><a href=\"objects.php?condition=userid={$row['userid']}\">{$row['username']}</a></td>";
 		echo "<td>{$row['comment']}</td>";
 		echo "<td>{$row['maintenance_instructions']}</td>";

@@ -31,69 +31,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
 	if ($_POST['added']=="") {
-		$query="INSERT INTO objects (ownerid,model,serial,location,institute_inventory_number,order_number,object_name,comment) VALUES (";
+		$query="INSERT INTO objects (ownerid,model,serial,location,location_description,institute_inventory_number,order_number,object_name,comment) VALUES (";
 	} else {
-		$query="INSERT INTO objects (added,ownerid,model,serial,location,institute_inventory_number,order_number,object_name,comment) VALUES (";
+		$query="INSERT INTO objects (added,ownerid,model,serial,location,location_description,institute_inventory_number,order_number,object_name,comment) VALUES (";
 		$query.="'{$_POST['added']}', ";
 	}
 	$query.="'{$_POST['ownerid']}', ";
 	$query.="{$_POST['model']}, ";
 	$query.="'".pg_escape_string($dbconn,$_POST['serial'])."', ";
 	$query.="$location, ";
+	$query.="'".pg_escape_string($dbconn,$_POST['location_description'])."', ";
 	$query.="'".pg_escape_string($dbconn,$_POST['institute_inventory_number'])."', ";
 	$query.="'".pg_escape_string($dbconn,$_POST['order_number'])."', ";
 	$query.="'".pg_escape_string($dbconn,$_POST['object_name'])."', ";
 	$query.="'".pg_escape_string($dbconn,$_POST['comment'])."') RETURNING id;";
 	$result=pg_query($dbconn,$query);
-	if (pg_num_rows($result)==1) {
-		$row=pg_fetch_assoc($result);
-		$id=$row['id'];
-		
-		if ($modeldata['sublocations']!="") {
-			if (strpos($modeldata['type'],'Crate')!==FALSE) {
-				$loctype='Crate';
-			}	else if (strpos($modeldata['type'],'Rack')!==FALSE) {
-				$loctype='Rack';
-			} else {
-				$loctype='Module';
-			}
-			
-			if ($_POST['object_name']!="") {
-				$locname=$modeldata['type']." ".$_POST['object_name'];
-			} else {
-				$locname=$modeldata['type']." $id";
-			}
-			$result = pg_query($dbconn,"INSERT INTO locations (type,location_name,parent_location) VALUES ('$loctype','$locname',$location) RETURNING location;");
-			$row=pg_fetch_assoc($result);
-			$sublocation_parent=$row['location'];
-			
-			if ($modeldata['sublocations']=="individual") {
-			} else {
-				$sublocs=explode(",",$modeldata['sublocations']);
-				foreach ($sublocs as $subloc) {
-					$parts=explode(" ",ltrim($subloc));
-					if (strpos($parts[0],"-")===FALSE) {
-						$name="";
-						for ($j=0; $j<count($parts); $j++) {
-							$name.=$parts[$j]." ";
-						}
-						create_sublocation($dbconn,$parts[count($parts)-1],$name,$sublocation_parent);
-					} else {
-						$fromto=explode("-",$parts[0]);
-						for ($i=$fromto[0]; $i<=$fromto[1]; $i++) {
-							$name="";
-							for ($j=1; $j<count($parts); $j++) {
-								$name.=$parts[$j]." ";
-							}
-							$name.=$i;
-							create_sublocation($dbconn,$parts[count($parts)-1],$name,$sublocation_parent);
-						}
-					}
-				}
-			}
-			pg_query($dbconn,"UPDATE objects SET sublocations_parentlocation=$sublocation_parent WHERE id=$id;");
-		}
-	} else {
+	if (pg_num_rows($result)!=1) {
 		echo "<div id=content><h1>Add failed</h1>";
 	}
 
@@ -122,8 +75,9 @@ if (strpos($condition,"type")!==FALSE) {
 echo "</h1>";
 
 if ($condition=="") {
-	foreach ($model_types as $type) {
-		echo "<a href=\"objects.php?condition=type='$type'\">List of ${type}s</a><br>\n";
+	$result=pg_query($dbconn,"select type from models group by type order by type;");
+	while ($row=pg_fetch_assoc($result)) {
+		echo "<a href=\"objects.php?condition=type='{$row['type']}'\">List of {$row['type']}s</a><br>\n";
 	}
  } else if (strpos("Board,VME Module,HV Module,NIM Module,CAMAC Module",$type)!==FALSE) {
 	$result=pg_query($dbconn,"SELECT * FROM models WHERE type='$type';");
@@ -155,7 +109,7 @@ if ($condition=="") {
 		echo "<td><a href=\"model.php?model=".$row['model']."\">".$row['name']."</a></td>";
 		echo "<td>{$row['object_name']}</td>";
 		echo "<td>{$row['serial']}</td>";
-		echo "<td>".get_location($dbconn,$row['location'])."</td>";
+		echo "<td>".get_location($dbconn,$row['id'])."</td>";
 		echo "<td><a href=\"objects.php?condition=userid={$row['userid']}\">{$row['username']}</a></td>";
 		echo "<td>{$row['comment']}</td>";
 		echo "</tr>\n";
@@ -185,7 +139,7 @@ if ($condition=="") {
 		echo "object_name: <input type=\"text\" name=\"object_name\" size=\"20\"><br>\n";
 		echo "Location: ";
 		
-		select_location($last_location);
+		select_location('',$last_location);
 		echo "<br/>";
 		echo "institute inventory: <input type=\"text\" name=\"institute_inventory_number\" size=\"60\"  value=\"\"><br>\n";
 		echo "order number: <input type=\"text\" name=\"order_number\" size=\"60\"  value=\"\"><br>\n";

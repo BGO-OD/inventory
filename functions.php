@@ -1,32 +1,49 @@
 <?php
 $enable_location_select=false;
 
-function get_location($dbconn,$location,$with_links=TRUE) {
+function get_location($dbconn,$id,$with_links=TRUE) {
 	$string="";
+	$result=pg_query($dbconn,"SELECT location,location_description FROM objects WHERE id='$id';");
+	if ($row=pg_fetch_assoc($result)) {
+		$id=$row['location'];
+		if($row['location_description'] != '') {
+			$string="(${row['location_description']})";
+		}
+	} else {
+		return "Object location not found!";
+	}
+
 	do {
-		$result=pg_query($dbconn,"SELECT parent_location,type,location_name FROM locations WHERE location='$location';");
+		$result=pg_query($dbconn,"SELECT id,location,object_name,models.type, location_description FROM objects inner join models on models.model=objects.model WHERE id='$id';");
 		if ($row=pg_fetch_assoc($result)) {
 			if ($string!="") {
 				$string="&raquo;".$string;
 			}
+
 			if ($with_links) {
 				$string="</a>".$string;
 			}
-			$string=$row['location_name'].$string;
-			if ($with_links) {
-				$string="<a href=\"location.php?location=$location\">".$string;
+			$object_name=$row['object_name'];
+			if($object_name == '') {
+				$object_name = $row['type'].' '.$row['id'];
 			}
-			$location=$row['parent_location'];
+			$string=$object_name.$string;
+			if ($with_links) {
+				$string="<a href=\"object.php?object=$id\">".$string;
+			}
+			if($row['location_description'] != '') {
+				$string="(".$row['location_description'].")&raquo;".$string;
+			}
+			$id=$row['location'];
 		} else {
 			break;
 		}
-	} while ($location!=NULL);
+	} while ($id!=NULL);
 	return $string;
 	}
 
 function navigation_bar() {
 	echo "<DIV id=\"navigation\">\n";
-	echo "<a class=\"navbutton\" href=\"locations.php\">Locations list</a>\n";
 	echo "<a class=\"navbutton\" href=\"models.php\">Models list</a>\n";
 	echo "<a class=\"navbutton\" href=\"objects.php\">Objects list</a>\n";
 	echo "<a class=\"navbutton\" href=\"users.php\">User list</a>\n";
@@ -51,7 +68,7 @@ function extra_header_content() {
 			select.form.reset();
 		}
 		window.onload = reLoad;
-		function nextSelectLocationBox(caller)
+		function nextSelectLocationBox(caller,id)
 		{
 			var option=caller.value;
 			var parent_span =caller.parentNode;
@@ -60,7 +77,7 @@ function extra_header_content() {
 			} else {// code for IE6, IE5
 				xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 			}
-			xmlhttp.open("GET","location_serv.php?location="+option,false);
+			xmlhttp.open("GET","location_serv.php?location="+option+"&id="+id,false);
 			xmlhttp.send(null);
 			if(xmlhttp.responseText != "") {
 				parent_span.innerHTML=xmlhttp.responseText;
@@ -71,9 +88,9 @@ EOT;
 	}
 }
 
-function select_location($location="") {
+function select_location($id="",$location="") {
 	echo "<span id=\"selectLocation_container\" class=\"select_location\">";
-	include "http://localhost/".dirname($_SERVER['PHP_SELF'])."/location_serv.php?location=$location";
+	include "http://localhost/".dirname($_SERVER['PHP_SELF'])."/location_serv.php?location=$location&id=$id";
 	echo "</span>\n";
 }
 
