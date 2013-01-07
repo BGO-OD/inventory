@@ -10,6 +10,14 @@ if (!$dbconn) {
 $id=$_GET['id'];
 $location=$_GET['location'];
 
+if( $id=="") {
+	$id="0";
+}
+
+if( $location=="") {
+	$location="0";
+}
+
 $result = pg_query($dbconn, "SELECT location_description FROM objects WHERE id=$id;");
 if( $row=pg_fetch_assoc($result) ) {
 	$location_description=$row['location_description'];
@@ -36,7 +44,7 @@ $name="";
 if(count($location_list) ==0) {
 	$name="location";
 }
-echo "<SELECT id=\"initial_location_selector\" name=\"$name\" onChange=\"javascript: nextSelectLocationBox(this)\" >\n";
+echo "<SELECT id=\"initial_location_selector\" name=\"$name\" onChange=\"javascript: nextSelectLocationBox(this,$id)\" >\n";
 echo "<OPTION value=0></OPTION>\n";
 while ($row=pg_fetch_assoc($result)) {
 	if(count($location_list) >0 && $row['id'] == $location_list[count($location_list)-1]) {
