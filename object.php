@@ -33,12 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result=pg_query($dbconn,$query);
 		break;
 	case 'update object_name':
-		$result = pg_query($dbconn,"SELECT sublocations_parentlocation,type FROM objects INNER JOIN models USING (model)WHERE id=$object;");
-		$row=pg_fetch_assoc($result);
-		if ($row['sublocations_parentlocation']!="") {
-			$query="UPDATE locations SET location_name='{$row['type']} {$_POST['object_name']}' WHERE location={$row['sublocations_parentlocation']};";
-			$result=pg_query($dbconn,$query);
-		};
 	case 'update comment':
 	case 'update added':
 	case 'update next_maintenance':

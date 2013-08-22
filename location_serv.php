@@ -38,10 +38,10 @@ while($location != "") {
 	}
 }
 
-$result = pg_query($dbconn, "SELECT id,object_name FROM objects WHERE location is NULL ORDER BY object_name;");
+$result = pg_query($dbconn, "SELECT id,object_name, sublocations FROM objects  inner join models on objects.model=models.model WHERE location is NULL ORDER BY object_name;");
 
 $name="";
-if(count($location_list) ==0) {
+if(count($location_list) <= 1) {
 	$name="location";
 }
 echo "<SELECT id=\"initial_location_selector\" name=\"$name\" onChange=\"javascript: nextSelectLocationBox(this,$id)\" >\n";
@@ -49,6 +49,7 @@ echo "<OPTION value=0></OPTION>\n";
 while ($row=pg_fetch_assoc($result)) {
 	if(count($location_list) >0 && $row['id'] == $location_list[count($location_list)-1]) {
 		$selected="selected";
+		$sublocations=$row['sublocations'];
 	}else {
 		$selected="";
 	}
