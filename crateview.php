@@ -17,7 +17,7 @@ function list_object_at($dbconn,$object,$name) {
 			echo "<input type=\"hidden\" name=\"location\" value=\"$object\"/>\n";
 			echo "<input type=\"hidden\" name=\"location_description\" value=\"$name\"/>\n";
 			echo "<button name=\"submit\" type=\"submit\" value=\"submit\" >Submit</button>\n";
-			echo "</form><td>\n";
+			echo "</form></td>\n";
 		}
 	} else {
 		echo "<td>\n";
@@ -26,7 +26,7 @@ function list_object_at($dbconn,$object,$name) {
 		echo "<input type=\"hidden\" name=\"location\" value=\"$object\"/>\n";
 		echo "<input type=\"hidden\" name=\"location_description\" value=\"$name\"/>\n";
 		echo "<button name=\"submit\" type=\"submit\" value=\"submit\" >Submit</button>\n";
-		echo "</form><td>\n";
+		echo "</form></td>\n";
 	}
 }
 
@@ -60,6 +60,7 @@ $row=pg_fetch_assoc($result);
 $sublocations=$row['sublocations'];
 
 echo "<table>\n";
+echo "<tr><th>Sublocation (Slot)</th><th>Object Id</th></tr>\n";
 if($sublocations!='individual') {
 	echo "<br> Location description: ";
 	echo "<!--$sublocations-->";
