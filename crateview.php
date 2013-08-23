@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$location_description=$_POST['location_description'];
 	// set location of any old object in this location to Unknown, which is object id 1988
 	$query="BEGIN;";
-	$query.="UPDATE objects SET location=1998 WHERE location=$location AND trim(both from location_description) = '$location_description';";
+	$query.="UPDATE objects SET location=1988 WHERE location=$location AND trim(both from location_description) = '$location_description';";
 	if ($subobject!="") {
 		$query.="UPDATE objects SET location=$location, location_description='$location_description' WHERE id=$subobject;";
 	}
