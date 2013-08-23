@@ -195,7 +195,8 @@ echo "</table>\n";
 
 
 if ($sublocations!="") {
-	echo "<h2>Objects at this location</h2>";
+	echo "<h2>Objects at this location</h2>\n";
+	echo "<a class=\"navbutton\" href=\"crateview.php?object=$object\">Crate View</a><br>\n";
 	echo "<table class=\"rundbtable\">\n";
 	echo "<tr class=\"rundbhead\">";
 	echo "<td>id</td>";

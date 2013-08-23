@@ -11,9 +11,6 @@ if (isset($_GET['condition'])) {
 	$condition="";
  }
 
-function create_sublocation($dbconn,$type,$name,$parent) {
-	$result=pg_query($dbconn,"INSERT INTO locations (type,location_name,parent_location) VALUES ('$type','$name',$parent);");
-}
 
 
 
