@@ -10,7 +10,9 @@ if (isset($_GET['condition'])) {
  } else {
 	$condition="";
  }
-
+if (isset($_GET['name'])) {
+	$extraorder="object_name,";
+ }
 
 
 
@@ -96,7 +98,7 @@ if ($condition=="") {
 	echo "<td>comment</td>";
 	echo "</tr>\n";
 	
-	$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,userid,object_name FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id)) LEFT OUTER JOIN owners USING (ownerid) $condition ORDER BY id DESC;");
+	$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,userid,object_name FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id)) LEFT OUTER JOIN owners USING (ownerid) $condition ORDER BY $extraorder id DESC;");
 	while ($row=pg_fetch_assoc($result)) {
 		echo "<tr class=\"rundbrun\">";
 		echo "<td><a href=\"object.php?object='".$row['id']."'\">".$row['id']."</a></td>";
