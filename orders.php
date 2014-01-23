@@ -3,6 +3,10 @@
 	include 'functions.php';
 	include 'variables.php';
 
+	function dateFromPostgres($date) {
+		return DateTime::createFromFormat('Y-m-d G:i:s', $date)->format('d.m.Y');
+	}
+
 	page_head("Orders","B1 inventory: Orders");
 	$dbconn = pg_connect($dbstring);
 	if (!$dbconn) {
@@ -29,8 +33,8 @@
 		echo "<tr class=\"rundbrun\">";
 		echo "<td>"; if ($row['inventorycounts'] > 0) echo "<a href=\"objects.php?condition=order_number LIKE '%2505/".substr($row['number'],1)."%25'\">05/".substr($row['number'],1)."</a>"; else echo "05/".substr($row['number'],1); echo "</td>";
 		echo "<td>{$row['name']}</td>";
-		echo "<td>"; if (!empty($row['invoicedate'])) echo DateTime::createFromFormat('Y-m-d G:i:s', $row['orderdate'])->format('d.m.Y');   echo "</td>";
-		echo "<td>"; if (!empty($row['invoicedate'])) echo DateTime::createFromFormat('Y-m-d G:i:s', $row['invoicedate'])->format('d.m.Y'); echo "</td>";
+		echo "<td>"; if (!empty($row['orderdate'])) echo dateFromPostgres($row['orderdate']);   echo "</td>";
+		echo "<td>"; if (!empty($row['invoicedate'])) echo dateFromPostgres($row['invoicedate']); echo "</td>";
 		echo "<td>{$row['netto']}/{$row['brutto']}/{$row['amount']} ({$row['currency']})</td>";
 		echo "<td>{$row['besteller']}</td>";
 		echo "<td>{$row['comment']}</td>";
