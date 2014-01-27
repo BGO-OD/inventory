@@ -6,10 +6,21 @@ include 'variables.php';
 
 $enable_location_select=true;
 
+if (isset($_GET['object'])) {
+	$object=$_GET['object'];
+	$where=" id=$object ";
+ } else if (isset($_GET['serial'])) {
+	if (isset($_GET['model'])) {
+		$where=" model=${_GET['model']} AND serial='${_GET['serial']}'";
+	} else if (isset($_GET['type'])) {
+		$where=" type='${_GET['type']}' AND serial='${_GET['serial']}'";
+	} else {
+		die("insufficent parameters");
+	}
+ } else {
+	die("insufficent parameters");
+ }
 
-$object=$_GET['object'];
-
-page_head("B1 inventory","B1 inventory: Object $object");
 $dbconn = pg_connect($dbstring);
 if (!$dbconn) {
 	  die('Could not connect: ' . pg_last_error());
@@ -59,11 +70,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	}
  }
 
-echo "<div id=content><h1>Object $object<img src=\"barcode.php?number=$object\"></h1>";
 
-$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,object_name,usage.comment as usage_comment,institute_inventory_number,order_number,sublocations,ownerid,added,next_maintenance FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid,comment FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id))   LEFT OUTER JOIN owners USING (ownerid) WHERE id=$object;");
+$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,object_name,usage.comment as usage_comment,institute_inventory_number,order_number,sublocations,ownerid,added,next_maintenance FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid,comment FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id))   LEFT OUTER JOIN owners USING (ownerid) WHERE $where;");
 $row=pg_fetch_assoc($result);
 $model=$row['model'];
+$object=$row['id'];
+
+
+page_head("B1 inventory","B1 inventory: Object $object");
+echo "<div id=content><h1>Object $object<img src=\"barcode.php?number=$object\"></h1>";
+
 echo "<form action=\"object.php?object=$object\" method=\"POST\">";
 
 echo "<table class=\"rundbtable\">\n";
