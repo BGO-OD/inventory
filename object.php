@@ -223,7 +223,7 @@ if ($sublocations!="") {
 	echo "<td>name</td>";
 	echo "<td>comment</td>";
 	echo "</tr>\n";
-	$result = pg_query($dbconn, "SELECT id, location_description, type, manufacturer, models.name, object_name, objects.comment FROM objects inner join models using (model)  WHERE location=$object ORDER BY location_description;");
+	$result = pg_query($dbconn, "SELECT id, location_description, type, manufacturer, models.name, object_name, objects.comment FROM objects inner join models using (model)  WHERE location=$object ORDER BY COALESCE(location_description,''), id;");
 	while ($row=pg_fetch_assoc($result)) {
 		echo "<tr class=\"rundbrun\">";
 		echo "<td><a href=\"object.php?object=".$row['id']."\">".$row['id']."</a></td>";
