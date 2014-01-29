@@ -22,7 +22,7 @@ if (!$dbconn) {
 
 echo "<div id=content><h1>Order $order</h1>\n";
 
-$result = pg_query($dbconn,"SELECT *, (SELECT count(id) FROM objects WHERE order_number LIKE ('%05/' || substring(concat('0',number) from 3) || '%')) AS inventorycounts, (SELECT name FROM users WHERE userid=besteller) as bestellername FROM orders WHERE number = $order;");
+$result = pg_query($dbconn,"SELECT *, (SELECT count(id) FROM objects WHERE order_number LIKE ('%05/' || substring(concat('0',number) from 3) || '%')) AS inventorycounts, (SELECT name FROM users WHERE userid=besteller) as bestellername,(SELECT name FROM users WHERE userid=signed_by) AS signature_name, FROM orders WHERE number = $order;");
 if ($row = pg_fetch_assoc($result)) {
 	echo "<table class=\"rundbtable\"></tr>\n";
 	echo "<tr><td>Summary</td><td>${row['name']}</td></tr>\n";
@@ -40,7 +40,7 @@ if ($row = pg_fetch_assoc($result)) {
 	echo "<tr><td>Brutto</td><td>${row['brutto']}${row['currency']}</td></tr>\n";
 	echo "<tr><td>Really Paid</td><td>${row['amount']} EUR</td></tr>\n";
 	echo "<tr><td>Ordered by</td><td>${row['bestellername']}</td></tr>\n";
-	echo "<tr><td>Signed by</td><td>${row['signature']}</td></tr>\n";
+	echo "<tr><td>Signed by</td><td>${row['signature_name']}</td></tr>\n";
 
 	$result = pg_query($dbconn,"SELECT * FROM ordercomments WHERE number = $order ORDER BY date DESC;");
 	while ($row=pg_fetch_assoc($result)) {
