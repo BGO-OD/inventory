@@ -28,7 +28,7 @@
 	echo "<td>Signature</td>";
 	echo "</tr>\n";
 	
-	$result = pg_query($dbconn, "SELECT number, name, orderdate, invoicedate, netto, brutto, currency, amount, besteller, (select count(*) from ordercomments where ordercomments.number = orders.number) as comments, signature, (SELECT count(id) FROM objects WHERE order_number LIKE ('%05/' || substring(concat('0',number) from 3) || '%')) AS inventorycounts FROM orders ORDER BY number DESC;");
+	$result = pg_query($dbconn, "SELECT number, name, orderdate, invoicedate, netto, brutto, currency, amount, besteller, (select count(*) from ordercomments where ordercomments.number = orders.number) as comments, signature, (SELECT count(id) FROM objects WHERE order_number LIKE ('%05/' || substring(concat('0',number) from 3) || '%')) AS inventorycounts, (SELECT name FROM users WHERE userid=besteller) as bestellername FROM orders ORDER BY number DESC;");
 	while ($row=pg_fetch_assoc($result)) {
 		echo "<tr class=\"rundbrun\">";
 		echo "<td>"; if ($row['inventorycounts'] > 0) echo "<a href=\"objects.php?condition=order_number LIKE '%2505/".substr($row['number'],1)."%25'\">05/".substr($row['number'],1)."</a>"; else echo "05/".substr($row['number'],1); echo "</td>";
@@ -36,7 +36,7 @@
 		echo "<td>"; if (!empty($row['orderdate'])) echo dateFromPostgres($row['orderdate']);   echo "</td>";
 		echo "<td>"; if (!empty($row['invoicedate'])) echo dateFromPostgres($row['invoicedate']); echo "</td>";
 		echo "<td>{$row['netto']}/{$row['brutto']}/{$row['amount']} ({$row['currency']})</td>";
-		echo "<td>{$row['besteller']}</td>";
+		echo "<td>{$row['bestellername']}</td>";
 		echo "<td>{$row['comments']}</td>";
 		echo "<td>{$row['signature']}</td>";
 		echo "</tr>\n";
