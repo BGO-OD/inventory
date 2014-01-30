@@ -41,7 +41,7 @@
 		echo "<tr class=\"rundbrun\">";
 		echo "<td>"; if ($row['inventorycounts'] > 0) echo "<a href=\"objects.php?condition=order_number LIKE '%2505/".substr($row['number'],1)."%25'\">05/".substr($row['number'],1)."</a>"; else echo "05/".substr($row['number'],1); echo "</td>";
 		echo "<td><a href=\"order.php?order={$row['number']}\">{$row['name']}</a></td>";
-		echo "<td><a href=\"orders.php?condition=company='{$row['company']}'\">{$row['company']}</a></td>";
+		echo "<td><a href=\"orders.php?condition=company='".urlencode($row['company'])."'\">{$row['company']}</a></td>";
 		echo "<td>"; if (!empty($row['orderdate'])) echo dateFromPostgres($row['orderdate']);   echo "</td>";
 		echo "<td>"; if (!empty($row['invoicedate'])) echo dateFromPostgres($row['invoicedate']); echo "</td>";
 		echo "<td>{$row['netto']}/{$row['brutto']}/{$row['amount']} ({$row['currency']})</td>";
