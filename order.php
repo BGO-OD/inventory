@@ -22,10 +22,11 @@ if (!$dbconn) {
 
 echo "<div id=content><h1>Order $order</h1>\n";
 
-$result = pg_query($dbconn,"SELECT *, (SELECT count(id) FROM objects WHERE order_number LIKE ('%05/' || substring(concat('0',number) from 3) || '%')) AS inventorycounts, (SELECT name FROM users WHERE userid=besteller) as bestellername,(SELECT name FROM users WHERE userid=signed_by) AS signature_name, FROM orders WHERE number = $order;");
+$result = pg_query($dbconn,"SELECT *, (SELECT count(id) FROM objects WHERE order_number LIKE ('%05/' || substring(concat('0',number) from 3) || '%')) AS inventorycounts, (SELECT name FROM users WHERE userid=besteller) as bestellername, (SELECT name FROM users WHERE userid=signed_by) AS signature_name FROM orders WHERE number = $order;");
 if ($row = pg_fetch_assoc($result)) {
 	echo "<table class=\"rundbtable\"></tr>\n";
 	echo "<tr><td>Summary</td><td>${row['name']}</td></tr>\n";
+	echo "<tr><td>Company</td><td>${row['company']}</td></tr>\n";
 	echo "<tr><td>Number of inventorized objects</td>";
 	if ($row['inventorycounts'] > 0) {
 		echo "<td><a href=\"objects.php?condition=order_number LIKE '%2505/".substr($row['number'],1)."%25'\">${row['inventorycounts']}</a></td></tr>\n";
