@@ -33,11 +33,11 @@
 	echo "<td>Invoice Date</td>";
 	echo "<td>Price netto/brutto/paid (Currency)</td>";
 	echo "<td>Orderer</td>";
-	echo "<td>Comment</td>";
+	echo "<td>Comment/<br>Attachment</td>";
 	echo "<td>Signature</td>";
 	echo "</tr>\n";
 	
-	$result = pg_query($dbconn, "SELECT number, name, company, orderdate, invoicedate, netto, brutto, currency, amount, besteller, (select count(*) from ordercomments where ordercomments.number = orders.number) as comments,(SELECT name FROM users WHERE userid=signed_by) AS signature, (SELECT count(id) FROM objects WHERE order_number LIKE ('%05/' || substring(concat('0',number) from 3) || '%')) AS inventorycounts, (SELECT name FROM users WHERE userid=besteller) as bestellername FROM orders ${condition} ORDER BY number DESC;");
+	$result = pg_query($dbconn, "SELECT number, name, company, orderdate, invoicedate, netto, brutto, currency, amount, besteller, (select count(*) from order_weblinks where order_weblinks.number = orders.number) as attachments, (select count(*) from ordercomments where ordercomments.number = orders.number) as comments,(SELECT name FROM users WHERE userid=signed_by) AS signature, (SELECT count(id) FROM objects WHERE order_number LIKE ('%05/' || substring(concat('0',number) from 3) || '%')) AS inventorycounts, (SELECT name FROM users WHERE userid=besteller) as bestellername FROM orders ${condition} ORDER BY number DESC;");
 
 	while ($row=pg_fetch_assoc($result)) {
 		echo "<tr class=\"rundbrun\">";
@@ -48,7 +48,7 @@
 		echo "<td>"; if (!empty($row['invoicedate'])) echo dateFromPostgres($row['invoicedate']); echo "</td>";
 		echo "<td>{$row['netto']}/{$row['brutto']}/{$row['amount']} ({$row['currency']})</td>";
 		echo "<td><a href=\"orders.php?condition=besteller={$row['besteller']}\">{$row['bestellername']}</a></td>";
-		echo "<td>{$row['comments']}</td>";
+		echo "<td><a href=\"order.php?order={$row['number']}\">{$row['comments']}/{$row['attachments']}</a></td>";
 		echo "<td>{$row['signature']}</td>";
 		echo "</tr>\n";
 	}

@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	case 'update currency':
 		$submitparts=explode(" ",$_POST['submit']);
 		$field=$submitparts[1];
+		if (empty($_POST[$field])) $_POST[$field] = 'NULL';
 		$query="UPDATE orders SET $field='{$_POST[$field]}' WHERE number=$order;";
 		$result=pg_query($dbconn,$query);
 		break;
@@ -42,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	case 'update signed_by':
 		$submitparts=explode(" ",$_POST['submit']);
 		$field=$submitparts[1];
+		if (empty($_POST[$field])) $_POST[$field] = 'NULL';
 		$query="UPDATE orders SET $field={$_POST[$field]} WHERE number=$order;";
 		$result=pg_query($dbconn,$query);
 		break;
@@ -92,14 +94,14 @@ echo "</datalist>\n";
 echo "<datalist id=\"accounts\">";
 $result = pg_query($dbconn,"SELECT account FROM orders GROUP BY account ORDER BY account;");
 while ($row=pg_fetch_assoc($result)) {
-	echo "<option value=\"{$row['company']}\">";
+	echo "<option value=\"{$row['account']}\">";
 }
 echo "</datalist>\n";
 
 echo "<datalist id=\"currencies\">";
 $result = pg_query($dbconn,"SELECT currency FROM orders GROUP BY currency ORDER BY currency;");
 while ($row=pg_fetch_assoc($result)) {
-	echo "<option value=\"{$row['company']}\">";
+	echo "<option value=\"{$row['currency']}\">";
 }
 echo "</datalist>\n";
 
@@ -167,7 +169,7 @@ echo "</tr>\n";
 
 echo "<tr><td>Number of inventorized objects</td>";
 if ($inventorycounts > 0) {
-	echo "<td><a href=\"objects.php?condition=order_number LIKE '%2505/".substr($number,1)."%25'\">$inventorycounts</a></td>";
+	echo "<td><a href=\"objects.php?condition=order_number LIKE '%25".$number."%25'\">$inventorycounts</a></td>";
 } else {
 	echo "<td>$inventorycounts</td>";
 }
@@ -243,19 +245,23 @@ echo "</tr>\n";
 
 if ($neworder) echo "<tr><td colspan=\"2\"><button name=\"submit\" type=\"submit\" value=\"create order\" >New Order</button></td></tr>\n";
 else {
-	echo "<tr><td colspan=\"3\">&nbsp;</td></tr>\n";
-	echo "<tr><td colspan=\"3\">Comments:</td></tr>\n";
-}
-
-$result = pg_query($dbconn,"SELECT * FROM ordercomments WHERE number = $order ORDER BY date DESC;");
-while ($row=pg_fetch_assoc($result)) {
-	echo "<tr><td>${row['date']}</td><td>${row['comment']}</td>";
-	if (!$neworder) echo "<td></td>";
+	echo "</table>\n";
+	echo "<h2>Comments</h2>\n";
+	echo "<table class=\"rundbtable\">\n";
+	echo "<tr class=\"rundbhead\">";
+	echo "<td>date</td>";
+	echo "<td colspan=\"2\">comment</td>";
 	echo "</tr>\n";
 }
 if (!$neworder) {
-	echo "<tr><td></td><td><input type=\"text\" name=\"ordercomment\" size=\"40\"></td>";
-	echo "<td><button name=\"submit\" type=\"submit\" value=\"add ordercomment\" >Update</button></td>";
+	$result = pg_query($dbconn,"SELECT * FROM ordercomments WHERE number = $order ORDER BY date DESC;");
+	while ($row=pg_fetch_assoc($result)) {
+		echo "<tr><td>${row['date']}</td><td colspan=\"2\">${row['comment']}</td>";
+		if (!$neworder) echo "<td></td>";
+		echo "</tr>\n";
+	}
+	echo "<tr><td colspan=\"2\"><input type=\"text\" name=\"ordercomment\" size=\"50\"></td>";
+	echo "<td><button name=\"submit\" type=\"submit\" value=\"add ordercomment\" >Add Comment</button></td>";
 	echo "</tr>\n";
 }
 echo "</table>\n";
