@@ -21,6 +21,8 @@
 
 	echo '<div id=content><h1>Orders</h1>';
 
+	echo '<a href="order.php">New Order</a>';
+
 	echo "<table class=\"rundbtable\">\n";
 	
 	echo "<tr class=\"rundbhead\">";
@@ -51,6 +53,8 @@
 		echo "</tr>\n";
 	}
 	echo "</table>\n";
+
+	echo '<a href="order.php">New Order</a>';
 
 	echo "</div>";
 
