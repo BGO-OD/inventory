@@ -29,22 +29,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	case 'update orderdate':
 	case 'update invoicedate':
 	case 'update account':
+	case 'update currency':
+		$submitparts=explode(" ",$_POST['submit']);
+		$field=$submitparts[1];
+		$query="UPDATE orders SET $field='{$_POST[$field]}' WHERE number=$order;";
+		$result=pg_query($dbconn,$query);
+		break;
 	case 'update netto':
 	case 'update brutto':
 	case 'update amount':
-	case 'update currency':
 	case 'update besteller':
 	case 'update signed_by':
 		$submitparts=explode(" ",$_POST['submit']);
 		$field=$submitparts[1];
-		$query="UPDATE orders SET $field='{$_POST[$field]}' WHERE number=$order;";
+		$query="UPDATE orders SET $field={$_POST[$field]} WHERE number=$order;";
 		$result=pg_query($dbconn,$query);
 		break;
 	case 'add ordercomment':
 		$result=pg_query($dbconn,"INSERT INTO ordercomments (comment,date,number) VALUES ('". pg_escape_string($dbconn,$_POST['ordercomment'])."', now(), $order);");
 		break;
 	case 'update order_weblink':
-		$result=pg_query($dbconn,"UPDATE order_weblinks SET comment='". pg_escape_string($dbconn,$_POST['comment'])."' WHERE orderlinkid=".pg_escape_string($_GET['linkid']).";");
+		$result=pg_query($dbconn,"UPDATE order_weblinks SET comment='". pg_escape_string($dbconn,$_POST['comment'])."' WHERE orderlinkid=".pg_escape_string($_POST['linkid']).";");
 		break;
 	case 'add order_file':
 		if($_FILES['userfile']['error'] == UPLOAD_ERR_OK) {
@@ -258,7 +263,7 @@ echo "</form>\n";
 
 if (!$neworder) {
 	echo "<h2>Attachments</h2>\n";
-	$result = pg_query($dbconn,"SELECT order_weblinks.link AS link, order_weblinks.comment AS comment, order_weblinks.orderlinkid AS oderlinkid, files.file_name AS filename FROM order_weblinks, files WHERE files.file = order_weblinks.link AND number=$order ORDER BY orderlinkid;");
+	$result = pg_query($dbconn,"SELECT order_weblinks.link AS link, order_weblinks.comment AS comment, order_weblinks.orderlinkid AS orderlinkid, files.file_name AS filename FROM order_weblinks, files WHERE files.file = order_weblinks.link AND number=$order ORDER BY orderlinkid;");
 	echo "<table class=\"rundbtable\">\n";
 	echo "<tr class=\"rundbhead\">";
 	echo "<td>link</td>";
@@ -267,10 +272,10 @@ if (!$neworder) {
 	echo "</tr>\n";
 	while ($row=pg_fetch_assoc($result)) {
 		echo "<tr class=\"rundbrun\">";
-		echo "<form action=\"order.php?order=$order&linkid={$row['orderlinkid']}\" method=\"POST\">\n";
+		echo "<form action=\"order.php?order=$order\" method=\"POST\">\n";
 		echo "<td><a href=\"file.php?oid={$row['link']}\">{$row['filename']}</a></td>";
 		echo "<td><input type=\"text\" name=\"comment\" size=20 value=\"{$row['comment']}\"></td>";
-		echo "<td><button name=\"submit\" type=\"submit\" value=\"update order_weblink\" >Update</button></td>\n";
+		echo "<td><input type=\"hidden\" name=\"linkid\" value=\"{$row['orderlinkid']}\"><button name=\"submit\" type=\"submit\" value=\"update order_weblink\" >Update</button></td>\n";
 		echo "</form>\n";
 		echo "</tr>\n";
 	}
