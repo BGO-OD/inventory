@@ -140,7 +140,7 @@ echo "<tr><td>Owner</td>       <td>";
 select_owner($dbconn,$row['ownerid']);
 echo "</td><td><button name=\"submit\" type=\"submit\" value=\"update ownerid\" >Update</button></td></tr>\n";
 echo "<tr><td>order number</td>";
-echo "<td><input type=\"text\" name=\"order_number\" size=60 value=\"${row['order_number']}\"></td>\n";
+echo "<td><input type=\"text\" name=\"order_number\" size=60 value=\"${row['order_number']}\"><a href=\"orders.php?condition='${row['order_number']}'~ordernumber\">Look up in order list</a></td>\n";
 echo "<td><button name=\"submit\" type=\"submit\" value=\"update order_number\" >Update</button></td></tr>\n";
 
 
