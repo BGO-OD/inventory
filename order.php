@@ -30,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	case 'update invoicedate':
 	case 'update account':
 	case 'update currency':
+	case 'update state':
 		$submitparts=explode(" ",$_POST['submit']);
 		$field=$submitparts[1];
 		if (empty($_POST[$field])) $_POST[$field] = 'NULL';
