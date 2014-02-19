@@ -59,10 +59,12 @@ if ($condition=="") {
 	echo "<td>description</td>";
 	echo "<td>comment</td>";
 	echo "<td># objects</td>";
+	echo "<td># used</td>";
+	echo "<td># spare</td>";
 	echo "<td># problems</td>";
 	echo "</tr>\n";
 	
-	$result = pg_query($dbconn, "SELECT *,(select count(*) FROM maintenance WHERE id IN (SELECT id FROM objects WHERE objects.model=models.model) AND (status~'Broken' OR status~'Problem')) AS nprobs,(SELECT count(*) FROM objects WHERE objects.model=models.model) as nobjs FROM models $condition ORDER BY model DESC;");
+	$result = pg_query($dbconn, "SELECT *,(select count(*) FROM maintenance WHERE id IN (SELECT id FROM objects WHERE objects.model=models.model) AND (status~'Broken' OR status~'Problem')) AS nprobs,(SELECT count(*) FROM objects WHERE objects.model=models.model) as nobjs,(SELECT count(*) FROM objects INNER JOIN usage USING (id) WHERE objects.model=models.model AND now() between validfrom AND validto AND userid=36) as nspares,(SELECT count(*) FROM objects INNER JOIN usage USING (id) WHERE objects.model=models.model AND now() between validfrom AND validto AND userid!=36) as nused  FROM models $condition ORDER BY model DESC;");
 	while ($row=pg_fetch_assoc($result)) {
 		echo "<tr class=\"rundbrun\">";
 		echo "<td><a href=\"model.php?model={$row['model']}\">{$row['model']}</a></td>";
@@ -74,6 +76,8 @@ if ($condition=="") {
 		echo "<td>{$row['description']}</td>";
 		echo "<td>{$row['comment']}</td>";
 		echo "<td>{$row['nobjs']}</td>";
+		echo "<td>{$row['nused']}</td>";
+		echo "<td>{$row['nspares']}</td>";
 		if ($row['nprobs']==0) {
 			$state="good";
 		} else {
