@@ -58,9 +58,11 @@ if ($condition=="") {
 	echo "<td>sublocations</td>";
 	echo "<td>description</td>";
 	echo "<td>comment</td>";
+	echo "<td># objects</td>";
+	echo "<td># problems</td>";
 	echo "</tr>\n";
 	
-	$result = pg_query($dbconn, "SELECT * FROM models $condition ORDER BY model DESC;");
+	$result = pg_query($dbconn, "SELECT *,(select count(*) FROM maintenance WHERE id IN (SELECT id FROM objects WHERE objects.model=models.model) AND (status~'Broken' OR status~'Problem')) AS nprobs,(SELECT count(*) FROM objects WHERE objects.model=models.model) as nobjs FROM models $condition ORDER BY model DESC;");
 	while ($row=pg_fetch_assoc($result)) {
 		echo "<tr class=\"rundbrun\">";
 		echo "<td><a href=\"model.php?model={$row['model']}\">{$row['model']}</a></td>";
@@ -71,6 +73,13 @@ if ($condition=="") {
 		echo "<td>{$row['sublocations']}</td>";
 		echo "<td>{$row['description']}</td>";
 		echo "<td>{$row['comment']}</td>";
+		echo "<td>{$row['nobjs']}</td>";
+		if ($row['nprobs']==0) {
+			$state="good";
+		} else {
+			$state="bad";
+		}
+		echo "<td class=\"$state\">{$row['nprobs']}</td>";
 		echo "</tr>\n";
 	}
 	echo "</table>\n";
