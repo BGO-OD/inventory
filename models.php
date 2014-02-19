@@ -69,7 +69,7 @@ if ($condition=="") {
 		echo "<tr class=\"rundbrun\">";
 		echo "<td><a href=\"model.php?model={$row['model']}\">{$row['model']}</a></td>";
 		echo "<td>{$row['type']}</td>";
-		echo "<td>{$row['manufacturer']}</td>";
+		echo "<td><a href=\"models.php?condition=manufacturer='{$row['manufacturer']}'\">{$row['manufacturer']}</a></td>";
 		echo "<td>{$row['name']}</td>";
 		echo "<td>{$row['maintenance_interval']}</td>";
 		echo "<td>{$row['sublocations']}</td>";
