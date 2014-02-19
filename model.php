@@ -189,7 +189,7 @@ echo "<td>status</td>";
 echo "<td>comment</td>";
 echo "</tr>\n";
 
-$result = pg_query($dbconn, "SELECT id, object_name, date, status, maintenance.comment FROM objects INNER JOIN maintenance  USING (id) WHERE model=$model AND (status='Broken' OR status='Problem');");
+$result = pg_query($dbconn, "SELECT id, object_name, date, status, maintenance.comment FROM objects INNER JOIN maintenance  USING (id) WHERE model=$model AND (status~'Broken' OR status~'Problem');");
 while ($row=pg_fetch_assoc($result)) {
 	echo "<tr class=\"rundbrun\">";
 	echo "<td><a href=\"object.php?object='{$row['id']}'\">{$row['id']}</a></td>";
