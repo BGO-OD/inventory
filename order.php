@@ -66,9 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 		break;
 	case 'create order':
-		$query="INSERT INTO orders (name, number, ordernumber, company, orderdate, invoicedate, account, netto, brutto, currency, amount, besteller, signed_by) VALUES (";
+		$query="INSERT INTO orders (name, ordernumber, company, orderdate, invoicedate, account, netto, brutto, currency, amount, besteller, signed_by) VALUES (";
 		$query.="'". pg_escape_string($dbconn,$_POST['name']) . "', ";
-		$query.="'". pg_escape_string($dbconn,$order) . "', ";
 		$query.="'". pg_escape_string($dbconn,$_POST['ordernumber']) . "', ";
 		$query.="'". pg_escape_string($dbconn,$_POST['company']) . "', ";
 		if (isset($_POST['orderdate'])   && !empty($_POST['orderdate']))   $query.="'". pg_escape_string($dbconn,$_POST['orderdate']) . "', "; else $query.="NULL, ";
@@ -79,8 +78,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$query.="'". pg_escape_string($dbconn,$_POST['currency']) . "', ";
 		if (isset($_POST['amount']) && !empty($_POST['amount'])) $query.="'". pg_escape_string($dbconn,$_POST['amount']) . "', "; else $query.="NULL, ";
 		if (isset($_POST['besteller']) && is_numeric($_POST['besteller'])) $query.="". pg_escape_string($dbconn,$_POST['besteller']) . ", "; else $query.="NULL, ";
-		if (isset($_POST['signed_by']) && is_numeric($_POST['signed_by'])) $query.="". pg_escape_string($dbconn,$_POST['signed_by']) . ");"; else $query.="NULL);";
+		if (isset($_POST['signed_by']) && is_numeric($_POST['signed_by'])) $query.="". pg_escape_string($dbconn,$_POST['signed_by']) . ")"; else $query.="NULL)";
+		$query.=" RETURNING number;";
 		$result=pg_query($dbconn,$query);
+		$row=pg_fetch_assoc($result);
+		$order=$row['number'];
 		break;
 	}
 }
@@ -222,7 +224,7 @@ echo "</tr>\n";
 echo "<tr><td>Ordered by   </td>";
 echo "<td><SELECT name=\"besteller\">";
 echo "<OPTION value=\"-\">&nbsp;</OPTION>";
-$result=pg_query($dbconn,"select userid, name from users;");
+$result=pg_query($dbconn,"select userid, name from users ORDER BY split_part(name,' ',2);");
 while ($row=pg_fetch_assoc($result)) {
 	if ($row['name'] == $bestellername) $sel = "selected";
 	else $sel = "";
