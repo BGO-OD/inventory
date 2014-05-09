@@ -207,17 +207,17 @@ echo "</tr>\n";
 if ($neworder) $currency = '';
 
 echo "<tr><td>Netto        </td>";
-echo "<td><input type=\"number\" name=\"netto\" size=\"20\" value=\"$netto\">$currency</td>";
+echo "<td><input type=\"number\" min=\"0.00\" step=\"0.01\" name=\"netto\" size=\"20\" value=\"$netto\">$currency</td>";
 if (!$neworder) echo "<td><button name=\"submit\" type=\"submit\" value=\"update netto\" >Update</button></td>";
 echo "</tr>\n";
 
 echo "<tr><td>Brutto       </td>";
-echo "<td><input type=\"number\" name=\"brutto\" size=\"20\" value=\"$brutto\">$currency</td>";
+echo "<td><input type=\"number\" min=\"0.00\" step=\"0.01\" name=\"brutto\" size=\"20\" value=\"$brutto\">$currency</td>";
 if (!$neworder) echo "<td><button name=\"submit\" type=\"submit\" value=\"update brutto\" >Update</button></td>";
 echo "</tr>\n";
 
 echo "<tr><td>Really Paid  </td>";
-echo "<td><input type=\"number\" name=\"amount\" size=\"20\" value=\"$amount\">EUR</td>";
+echo "<td><input type=\"number\" min=\"0.00\" step=\"0.01\" name=\"amount\" size=\"20\" value=\"$amount\">EUR</td>";
 if (!$neworder) echo "<td><button name=\"submit\" type=\"submit\" value=\"update amount\" >Update</button></td>";
 echo "</tr>\n";
 
