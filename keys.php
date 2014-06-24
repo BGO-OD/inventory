@@ -10,12 +10,6 @@ if (!$dbconn) {
 	  die('Could not connect: ' . pg_last_error());
 };
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	$query="INSERT INTO users (name) VALUES (";
-	$query.="'{$_POST['key']}');";
-	$result=pg_query($dbconn,$query);
- }
-
 echo '<div id=content><h1>Guest Keys HSAG</h1>';
 echo "<table class=\"rundbtable\">\n";
 
