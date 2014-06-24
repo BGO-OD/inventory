@@ -49,6 +49,7 @@ function navigation_bar() {
 	echo "<a class=\"navbutton\" href=\"users.php\">User list</a>\n";
 	echo "<a class=\"navbutton\" href=\"owners.php\">Owner list</a>\n";
 	echo "<a class=\"navbutton\" href=\"orders.php\">Order list</a>\n";
+	echo "<a class=\"navbutton\" href=\"keys.php\">Key list</a>\n";
 	echo "<form action=\"object.php\" method=\"get\">";
 	echo "<div id=navsection>";
 	echo "goto Object ";
