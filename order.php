@@ -126,13 +126,9 @@ if ($row = pg_fetch_assoc($result)) {
 	$state = $row['state'];
 	$inventorycounts = $row['inventorycounts'];
 } else {
-	$result = pg_query($dbconn,"SELECT number FROM orders ORDER BY number DESC LIMIT 1;");
-	if ($row = pg_fetch_assoc($result)) {
-		$order = ($row['number'] + 1);
-		$neworder = true;
-	}
+	$neworder = true;
 	$id = $order;
-	$number = '05/'.substr($order,1);
+	$number = date('Y').".31.";
 	$name = "";
 	$company = "";
 	$orderdate = "";
