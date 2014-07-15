@@ -67,6 +67,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result=pg_query($dbconn,$query);
 
 		break;
+	case 'add object_weblink':
+		if($_POST['link'] != "") {
+			$result=pg_query($dbconn,"INSERT INTO object_files (object,link,comment) VALUES ($object,'{$_POST['link']}','$comment'); ");
+		} else {
+			echo "<h2>Error: empty link</h2>";
+		}
+		break;
+	case 'update object_file':
+		if($_POST['link'] != "") {
+			$result=pg_query($dbconn,"UPDATE object_files SET link='".pg_escape_string($_POST['link'])."',comment='$comment' WHERE linkid=".pg_escape_string($_GET['linkid']).";");
+		} else {
+			echo "<h2>Error: empty link</h2>";
+		}
+		break;
+	case 'add object_file':
+		if($_FILES['userfile']['error'] == UPLOAD_ERR_OK) {
+			pg_query($dbconn, "begin");
+			$oid = pg_lo_import($dbconn,$_FILES['userfile']['tmp_name']);
+			pg_query($dbconn,"INSERT INTO files (file_name,mimetype,file,size) VALUES ('{$_FILES['userfile']['name']}', '{$_FILES['userfile']['type']}', $oid ,'{$_FILES['userfile']['size']}' );");
+			$result=pg_query($dbconn,"INSERT INTO object_files (object,link,comment) VALUES ($object,'file.php?oid=$oid','$comment'); ");
+			pg_query($dbconn, "commit");
+		} else {
+			echo "<h2>Error uploading file. Error Code:" . $_FILES['userfile']['error'] ."</h2>";
+		}
+		break;
 	}
  }
 
@@ -253,6 +278,47 @@ while ($row=pg_fetch_assoc($result)) {
 	echo "</tr>\n";
  }
 echo "</table>\n";
+
+echo "<h2>Individual file links</h2>\n";
+$result = pg_query($dbconn,"SELECT * FROM object_files WHERE object=$object ORDER BY linkid;");
+echo "<table class=\"rundbtable\">\n";
+echo "<tr class=\"rundbhead\">";
+echo "<td>id</td>";
+echo "<td>link</td>";
+echo "<td>comment</td>";
+echo "<td></td>";
+echo "</tr>\n";
+while ($row=pg_fetch_assoc($result)) {
+	echo "<tr class=\"rundbrun\">";
+	echo "<form action=\"onject.php?object=$object&linkid={$row['linkid']}\" method=\"POST\">\n";
+	echo "<td><a href=\"{$row['link']}\">{$row['linkid']}</a></td>";
+	echo "<td><input type=\"text\" name=\"link\" size=50 value=\"{$row['link']}\"></td>";
+	echo "<td><input type=\"text\" name=\"comment\" size=20 value=\"{$row['comment']}\"></td>";
+	echo "<td><button name=\"submit\" type=\"submit\" value=\"update object_file\" >Update</button></td>\n";
+	echo "</form>\n";
+	echo "</tr>\n";
+ }
+echo "<tr class=\"rundbrun\">";
+echo "<form action=\"object.php?object=$object\" method=\"POST\">\n";
+echo "<td></td>";
+echo "<td><input type=\"text\" name=\"link\" size=50 value=\"\"></td>";
+echo "<td><input type=\"text\" name=\"comment\" size=20 value=\"\"></td>";
+echo "<td><button name=\"submit\" type=\"submit\" value=\"add object_weblink\" >Add</button></td>\n";
+echo "</form>\n";
+echo "</tr>\n";
+echo "<tr class=\"rundbrun\">";
+echo "<form enctype=\"multipart/form-data\" action=\"object.php?object=$object\" method=\"POST\">\n";
+echo "    <!-- MAX_FILE_SIZE must precede the file input field -->\n";
+echo "    <input type=\"hidden\" name=\"MAX_FILE_SIZE\" value=\"30000000\" />\n";
+echo "    <!-- Name of input element determines name in $_FILES array -->\n";
+echo "<td></td>";
+echo "<td>file: <input name=\"userfile\" type=\"file\" /></td>\n";
+echo "<td><input type=\"text\" name=\"comment\" size=20 value=\"\"></td>";
+echo "<td><button name=\"submit\" type=\"submit\" value=\"add object_file\" >Add File</button></td>\n";
+echo "</form>\n";
+echo "</tr>\n";
+echo "</table>\n";
+
 
 echo "</div>";
 page_foot();
