@@ -64,7 +64,13 @@ if ($condition=="") {
 	echo "<td># problems</td>";
 	echo "</tr>\n";
 	
-	$result = pg_query($dbconn, "SELECT *,(select count(*) FROM maintenance WHERE id IN (SELECT id FROM objects WHERE objects.model=models.model) AND (status~'Broken' OR status~'Problem')) AS nprobs,(SELECT count(*) FROM objects WHERE objects.model=models.model) as nobjs,(SELECT count(*) FROM objects INNER JOIN usage USING (id) WHERE objects.model=models.model AND now() between validfrom AND validto AND userid=36) as nspares,(SELECT count(*) FROM objects INNER JOIN usage USING (id) WHERE objects.model=models.model AND now() between validfrom AND validto AND userid!=36) as nused  FROM models $condition ORDER BY model DESC;");
+	$result = pg_query($dbconn, "SELECT *,
+			(SELECT count(*) FROM (SELECT DISTINCT ON (id) id ,date,status FROM maintenance WHERE status IN ( 'Problems' , 'Broken', 'Working') AND id IN (SELECT id FROM objects WHERE objects.model=models.model) ORDER BY id ,date DESC) AS q WHERE status != 'Working' ) AS nprobs,
+			(SELECT count(*) FROM maintenance WHERE status IN ( 'Problems' , 'Broken') AND id IN (SELECT id FROM objects WHERE objects.model=models.model)) AS ntotalprobs,
+			(SELECT count(*) FROM objects WHERE objects.model=models.model) as nobjs,
+			(SELECT count(*) FROM objects INNER JOIN usage USING (id) WHERE objects.model=models.model AND now() between validfrom AND validto AND userid=36) as nspares,
+			(SELECT count(*) FROM objects INNER JOIN usage USING (id) WHERE objects.model=models.model AND now() between validfrom AND validto AND userid!=36) as nused
+			FROM models $condition ORDER BY model DESC;");
 	while ($row=pg_fetch_assoc($result)) {
 		echo "<tr class=\"rundbrun\">";
 		echo "<td><a href=\"model.php?model={$row['model']}\">{$row['model']}</a></td>";
@@ -83,7 +89,7 @@ if ($condition=="") {
 		} else {
 			$state="bad";
 		}
-		echo "<td class=\"$state\">{$row['nprobs']}</td>";
+		echo "<td class=\"$state\">{$row['nprobs']} ({$row['ntotalprobs']})</td>";
 		echo "</tr>\n";
 	}
 	echo "</table>\n";
