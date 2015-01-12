@@ -50,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	case 'update serial':
 	case 'update ownerid':
 	case 'update institute_inventory_number':
+	case 'update echeck_inventory_number':
 	case 'update order_number':
 		$submitparts=explode(" ",$_POST['submit']);
 		$field=$submitparts[1];
@@ -158,12 +159,19 @@ echo "<td><button name=\"submit\" type=\"submit\" value=\"update comment\" >Upda
 echo "<tr><td>serial number</td>";
 echo "<td><input type=\"text\" name=\"serial\" size=60 value=\"${row['serial']}\"></td>\n";
 echo "<td><button name=\"submit\" type=\"submit\" value=\"update serial\" >Update</button></td></tr>\n";
+
 echo "<tr><td>institute inventory number</td>";
 echo "<td><input type=\"text\" name=\"institute_inventory_number\" size=60 value=\"${row['institute_inventory_number']}\"></td>\n";
 echo "<td><button name=\"submit\" type=\"submit\" value=\"update institute_inventory_number\" >Update</button></td></tr>\n";
+
+echo "<tr><td>e-check inventory number</td>";
+echo "<td><input type=\"text\" name=\"echeck_inventory_number\" size=60 value=\"${row['echeck_inventory_number']}\"></td>\n";
+echo "<td><button name=\"submit\" type=\"submit\" value=\"update echeck_inventory_number\" >Update</button></td></tr>\n";
+
 echo "<tr><td>Owner</td>       <td>";
 select_owner($dbconn,$row['ownerid']);
 echo "</td><td><button name=\"submit\" type=\"submit\" value=\"update ownerid\" >Update</button></td></tr>\n";
+
 echo "<tr><td>order number</td>";
 echo "<td><input type=\"text\" name=\"order_number\" size=60 value=\"${row['order_number']}\"><a href=\"orders.php?condition='${row['order_number']}'~ordernumber\">Look up in order list</a></td>\n";
 echo "<td><button name=\"submit\" type=\"submit\" value=\"update order_number\" >Update</button></td></tr>\n";
