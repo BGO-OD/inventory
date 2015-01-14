@@ -54,7 +54,8 @@ if ($condition=="") {
 	echo "<td>type</td>";
 	echo "<td>manufacturer</td>";
 	echo "<td>model name</td>";
-	echo "<td>maintenance_interval</td>";
+	echo "<td>maint. interval</td>";
+	echo "<td>maint. instr.</td>";
 	echo "<td>sublocations</td>";
 	echo "<td>description</td>";
 	echo "<td>comment</td>";
@@ -78,6 +79,7 @@ if ($condition=="") {
 		echo "<td><a href=\"models.php?condition=manufacturer='{$row['manufacturer']}'\">{$row['manufacturer']}</a></td>";
 		echo "<td>{$row['name']}</td>";
 		echo "<td>{$row['maintenance_interval']}</td>";
+		echo "<td>{$row['maintenance_instructions']}</td>";
 		echo "<td>{$row['sublocations']}</td>";
 		echo "<td>{$row['description']}</td>";
 		echo "<td>{$row['comment']}</td>";
