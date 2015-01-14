@@ -60,9 +60,8 @@ $row=pg_fetch_assoc($result);
 $sublocations=$row['sublocations'];
 
 echo "<table>\n";
-echo "<tr><th>Sublocation (Slot)</th><th>Object Id</th></tr>\n";
 if($sublocations!='individual') {
-	echo "<br> Location description: ";
+	echo "<tr><th>Sublocation (Slot)</th><th>Object Id</th></tr>\n";
 	echo "<!--$sublocations-->";
 	$sublocs=explode(",",$sublocations);
 	foreach ($sublocs as $subloc) {
@@ -90,6 +89,32 @@ if($sublocations!='individual') {
 		}
 	}
 } else {
+	echo "<tr><th>Location description</th><th>Object Id</th></tr>\n";
+	$result = pg_query($dbconn,"SELECT id, location_description FROM objects WHERE location=$object;");
+	while ($row=pg_fetch_assoc($result)) {
+		echo "<tr>\n";
+		echo "<td>${row['location_description']}</td>\n";
+		echo "<td>\n";
+		echo "<form action=\"crateview.php?object=$object\" method=\"POST\">\n";
+		echo "<input type=\"text\" name=\"subobject\" size=4 value=\"${row['id']}\"/>\n";
+		echo "<input type=\"hidden\" name=\"location\" value=\"$object\"/>\n";
+		echo "<input type=\"hidden\" name=\"location_description\" value=\"${row['location_description']}\"/>\n";
+		echo "<button name=\"submit\" type=\"submit\" value=\"submit\" >Submit</button>\n";
+		echo "</form></td>\n";
+		echo "</tr>\n";
+	}
+		echo "<tr>\n";
+		echo "<td>\n";
+		echo "<form action=\"crateview.php?object=$object\" method=\"POST\">\n";
+		echo "<input type=\"text\" name=\"location_description\" size=40 value=\"\"/>\n";
+		echo "</td>\n";
+		echo "<td>\n";
+		echo "<input type=\"text\" name=\"subobject\" size=4 value=\"\"/>\n";
+		echo "<input type=\"hidden\" name=\"location\" value=\"$object\"/>\n";
+		echo "<button name=\"submit\" type=\"submit\" value=\"submit\" >Submit</button>\n";
+		echo "</td>\n";
+		echo "</form>\n";
+		echo "</tr>\n";
 }
 echo "</table>\n";
 
