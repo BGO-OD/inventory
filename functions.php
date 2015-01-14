@@ -46,7 +46,7 @@ function navigation_bar() {
 	echo "<DIV id=\"navigation\">\n";
 	echo "<a class=\"navbutton\" href=\"models.php\">Models list</a>\n";
 	echo "<a class=\"navbutton\" href=\"objects.php\">Objects list</a>\n";
-	echo "<a class=\"navbutton\" href=\"objects.php?condition=maintenance_instructions='E-check'%20AND%20next_maintenance%3Cnow()&order=next_maintenance\">E-check overdue</a>\n";
+	echo "<a class=\"navbutton\" href=\"objects.php?condition=maintenance_instructions='E-check'%20AND%20next_maintenance%20-%20interval%20'1%20year'%3Cnow()&order=next_maintenance\">E-check overdue</a>\n";
 	echo "<a class=\"navbutton\" href=\"users.php\">User list</a>\n";
 	echo "<a class=\"navbutton\" href=\"owners.php\">Owner list</a>\n";
 	echo "<a class=\"navbutton\" href=\"orders.php\">Order list</a>\n";
