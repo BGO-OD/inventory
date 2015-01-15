@@ -41,23 +41,37 @@ if (!$dbconn) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$subobject=$_POST['subobject'];
-	$location=$_POST['location'];
-	$location_description=$_POST['location_description'];
-	// set location of any old object in this location to Unknown, which is object id 1988
-	$query="BEGIN;";
-	$query.="UPDATE objects SET location=1988 WHERE location=$location AND trim(both from location_description) = '$location_description';";
-	if ($subobject!="") {
-		$query.="UPDATE objects SET location=$location, location_description='$location_description' WHERE id=$subobject;";
+	if (isset($_POST['location_description']) && isset($_POST['location'])) {
+		$location=$_POST['location'];
+		$location_description=$_POST['location_description'];
 	}
-	$query.="COMMIT;";
- 	$result=pg_query($dbconn,$query);
+	if ($_POST['submit'] == 'submit') {
+		// set location of any old object in this location to Unknown, which is object id 1988
+		$query="BEGIN;";
+		$query.="UPDATE objects SET location=1988 WHERE location=$location AND trim(both from location_description) = '$location_description';";
+		if ($subobject!="") {
+			$query.="UPDATE objects SET location=$location, location_description='$location_description' WHERE id=$subobject;";
+		}
+		$query.="COMMIT;";
+		$result=pg_query($dbconn,$query);
+	} else if ($_POST['submit'] == 'movetounknown') {
+		$query="UPDATE objects SET location = 1988 WHERE id = $subobject;";
+		$result=pg_query($dbconn,$query);
+	} else if ($_POST['submit'] == 'add') {
+		$query="UPDATE objects SET location = $location, location_description='$location_description' WHERE id = $subobject;";
+		$result=pg_query($dbconn,$query);
+	}
  }
 
-echo "<div id=content><h1>Crate $object<img src=\"barcode.php?number=$object\"></h1>";
 
-$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,object_name,usage.comment as usage_comment,institute_inventory_number,order_number,sublocations,ownerid,added,next_maintenance FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid,comment FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id))   LEFT OUTER JOIN owners USING (ownerid) WHERE id=$object;");
+$result = pg_query($dbconn, "SELECT id,manufacturer,name,model,type,object_name, sublocations FROM objects INNER JOIN models  USING (model) WHERE id=$object;");
 $row=pg_fetch_assoc($result);
+
+echo "<div id=content><h1>Crate view of ${row['type']} ${row['object_name']} $object<img src=\"barcode.php?number=$object\"></h1>";
+echo "Which is a ${row['manufacturer']} ${row['name']}<br>\n";
+
 $sublocations=$row['sublocations'];
+
 
 echo "<table>\n";
 if($sublocations!='individual') {
@@ -89,18 +103,20 @@ if($sublocations!='individual') {
 		}
 	}
 } else {
-	echo "<tr><th>Location description</th><th>Object Id</th></tr>\n";
-	$result = pg_query($dbconn,"SELECT id, location_description FROM objects WHERE location=$object;");
+	echo "<tr><th>Location description</th><th>Object Id</th><th>Object type</th></tr>\n";
+	$result = pg_query($dbconn,"SELECT id, location_description, type, manufacturer, name FROM objects INNER JOIN models ON objects.model = models.model WHERE location=$object ORDER BY location, id;");
 	while ($row=pg_fetch_assoc($result)) {
 		echo "<tr>\n";
 		echo "<td>${row['location_description']}</td>\n";
 		echo "<td>\n";
 		echo "<form action=\"crateview.php?object=$object\" method=\"POST\">\n";
-		echo "<input type=\"text\" name=\"subobject\" size=4 value=\"${row['id']}\"/>\n";
-		echo "<input type=\"hidden\" name=\"location\" value=\"$object\"/>\n";
-		echo "<input type=\"hidden\" name=\"location_description\" value=\"${row['location_description']}\"/>\n";
-		echo "<button name=\"submit\" type=\"submit\" value=\"submit\" >Submit</button>\n";
+		echo "<input type=\"hidden\" name=\"subobject\" value=\"${row['id']}\"/>\n";
+		echo "<a href=\"object.php?object=${row['id']}\">${row['id']}</a>";
+		echo "<button name=\"submit\" type=\"submit\" value=\"movetounknown\" >Move to Unknown</button>\n";
 		echo "</form></td>\n";
+		echo "<td>\n";
+		echo "${row['type']} ${row['manufacturer']} ${row['name']}\n";
+		echo "</td>\n";
 		echo "</tr>\n";
 	}
 		echo "<tr>\n";
@@ -111,7 +127,7 @@ if($sublocations!='individual') {
 		echo "<td>\n";
 		echo "<input type=\"text\" name=\"subobject\" size=4 value=\"\"/>\n";
 		echo "<input type=\"hidden\" name=\"location\" value=\"$object\"/>\n";
-		echo "<button name=\"submit\" type=\"submit\" value=\"submit\" >Submit</button>\n";
+		echo "<button name=\"submit\" type=\"submit\" value=\"add\" >Submit</button>\n";
 		echo "</td>\n";
 		echo "</form>\n";
 		echo "</tr>\n";
