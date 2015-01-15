@@ -88,7 +88,7 @@ if ($condition=="") {
 	}
  } else {
 	
-	$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,userid,object_name, to_char(next_maintenance,'YYYY-MM-DD') as next_maintenance FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id)) LEFT OUTER JOIN owners USING (ownerid) $condition ORDER BY $extraorder id DESC;");
+	$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,userid,object_name, to_char(next_maintenance,'YYYY-MM-DD') as next_maintenance, echeck_inventory_number FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id)) LEFT OUTER JOIN owners USING (ownerid) $condition ORDER BY $extraorder id DESC;");
 
 	echo pg_num_rows($result);
 	echo " objects found<br>\n";
@@ -102,6 +102,7 @@ if ($condition=="") {
 	echo "<td>model name</td>";
 	echo "<td>object name</td>";
 	echo "<td>serial</td>";
+	echo "<td>e-check</td>";
 	echo "<td>location</td>";
 	echo "<td>used by</td>";
 	echo "<td>comment</td>";
@@ -118,6 +119,7 @@ if ($condition=="") {
 		echo "<td><a href=\"model.php?model=".$row['model']."\">".$row['name']."</a></td>";
 		echo "<td>{$row['object_name']}</td>";
 		echo "<td>{$row['serial']}</td>";
+		echo "<td>{$row['echeck_inventory_number']}</td>";
 		echo "<td>".get_location($dbconn,$row['id'])."</td>";
 		echo "<td><a href=\"objects.php?condition=userid={$row['userid']}\">{$row['username']}</a></td>";
 		echo "<td>{$row['comment']}</td>";

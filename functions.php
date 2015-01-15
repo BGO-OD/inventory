@@ -47,6 +47,8 @@ function navigation_bar() {
 	echo "<a class=\"navbutton\" href=\"models.php\">Models list</a>\n";
 	echo "<a class=\"navbutton\" href=\"objects.php\">Objects list</a>\n";
 	echo "<a class=\"navbutton\" href=\"objects.php?condition=maintenance_instructions='E-check'%20AND%20next_maintenance%20-%20interval%20'1%20year'%3Cnow()&order=next_maintenance\">E-check overdue</a>\n";
+	echo "<a class=\"navbutton\" href=\"objects.php?condition=echeck_inventory_number%20is%20not%20null&order=echeck_inventory_number\">Objects with E-check id</a>\n";
+	echo "<a class=\"navbutton\" href=\"objects.php?condition=echeck_inventory_number%20in%20(select%20echeck_inventory_number%20from%20(select%20echeck_inventory_number,count(*)%20as%20multiplicity%20from%20objects%20where%20echeck_inventory_number%20is%20not%20null%20group%20by%20echeck_inventory_number)%20as%20mult%20where%20multiplicity%20%3E%201)&order=echeck_inventory_number\">Objects with ambigous E-check id</a>\n";
 	echo "<a class=\"navbutton\" href=\"locationcheck.php\">Location check</a>\n";
 	echo "<a class=\"navbutton\" href=\"users.php\">User list</a>\n";
 	echo "<a class=\"navbutton\" href=\"owners.php\">Owner list</a>\n";
