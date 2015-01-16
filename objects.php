@@ -16,6 +16,9 @@ if (isset($_GET['name'])) {
 if (isset($_GET['order'])) {
 	$extraorder=$_GET['order'].",";
  }
+if (isset($_GET['limit'])) {
+	$limit=" LIMIT ".$_GET['limit'];
+ }
 
 
 
@@ -88,7 +91,7 @@ if ($condition=="") {
 	}
  } else {
 	
-	$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,userid,object_name, to_char(next_maintenance,'YYYY-MM-DD') as next_maintenance, echeck_inventory_number FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id)) LEFT OUTER JOIN owners USING (ownerid) $condition ORDER BY $extraorder id DESC;");
+	$result = pg_query($dbconn, "SELECT id,manufacturer,models.name,serial,location,objects.comment,model,type,users.name as username,userid,object_name, to_char(next_maintenance,'YYYY-MM-DD') as next_maintenance, echeck_inventory_number FROM ((objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid FROM usage WHERE validfrom<now() AND validto>now()) as usage NATURAL INNER JOIN users ) USING (id)) LEFT OUTER JOIN owners USING (ownerid) $condition ORDER BY $extraorder id DESC $limit;");
 
 	echo pg_num_rows($result);
 	echo " objects found<br>\n";
