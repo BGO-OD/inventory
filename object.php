@@ -183,6 +183,8 @@ echo "</table>\n";
 
 if ($row['type'] == 'Location') {
 	echo "<a class=\"navbutton\" href=\"locationcheck.php?location=$object&presentitems=\">Location check</a>\n";
+	echo "<a class=\"navbutton\" href=\"objects.php?condition=id IN (WITH RECURSIVE csl(id) AS (SELECT o.id FROM objects o WHERE o.location=$object UNION ALL SELECT o.id FROM csl sl, objects o WHERE sl.id = o.location)SELECT id FROM csl)\">Objects in this location and it's sublocations</a>\n";
+	echo "<a class=\"navbutton\" href=\"objects.php?condition=id IN (WITH RECURSIVE csl(id) AS (SELECT o.id FROM objects o WHERE o.location=$object UNION ALL SELECT o.id FROM csl sl, objects o WHERE sl.id = o.location)SELECT id FROM csl) AND maintenance_instructions='E-check'&order=next_maintenance DESC\">Objects in this location and it's sublocations requiring E-check</a>\n";
  }
 
 
