@@ -180,6 +180,12 @@ echo "<td><button name=\"submit\" type=\"submit\" value=\"update order_number\" 
 
 echo "</table>\n";
 
+
+if ($row['type'] == 'Location') {
+	echo "<a class=\"navbutton\" href=\"locationcheck.php?location=$object&presentitems=\">Location check</a>\n";
+ }
+
+
 $sublocations=$row['sublocations'];
 
 
