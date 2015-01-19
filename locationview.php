@@ -240,8 +240,8 @@ page_head("B1 inventory","B1 inventory: Location view");
 		drawRoom(150,595,50,40,"Rack 2","object.php?object=98",true,"");
 		drawRoom(150,635,50,40,"Rack 1","object.php?object=97",true,"");
 
-		drawRoom(50,595,50,40,"Rack X","",true,"");
-		drawRoom(50,635,50,40,"Rack Y","",true,"");
+		drawRoom(50,505,50,40,"Delay Rack","object.php?object=2559",true,"");
+		drawRoom(50,635,50,40,"Power Rack","",true,"");
 
 		drawStairs(50,350,50,50, false);
 
