@@ -257,36 +257,16 @@ page_head("B1 inventory","B1 inventory: Location view");
 			<td>Description</td>
 			<td>Object id</td>
 		</tr>
-		<tr class="rundbrun">
-			<td>PI 1.047</td>
-			<td>Daniel Elsners Office</td>
-			<td><a href="object.php?object=2143">2143</a></td>
-		</tr>
-		<tr class="rundbrun">
-			<td>PI 1.056</td>
-			<td>Teacher Room (Phil's Office)</td>
-			<td><a href="object.php?object=2355">2355</a></td>
-		</tr>
-		<tr class="rundbrun">
-			<td>W 1.</td>
-			<td>Guest Room</td>
-			<td><a href="object.php?object="></a></td>
-		</tr>
-		<tr class="rundbrun">
-			<td>W U1.019</td>
-			<td>Electronics Workshop</td>
-			<td><a href="object.php?object=2259">2259</a></td>
-		</tr>
-		<tr class="rundbrun">
-			<td>WP 0.003</td>
-			<td>Lab course room in the WP lecture hall</td>
-			<td><a href="object.php?object=2236">2236</a></td>
-		</tr>
-		<tr class="rundbrun">
-			<td>Wesselhalle</td>
-			<td></td>
-			<td><a href="object.php?object=1883">1883</a></td>
-		</tr>
+ <?php
+			$result = pg_query($dbconn,"SELECT id,object_name,comment FROM objects WHERE id in (2143,2355,2259,2236,1883,2726,1882,1872,2320,1988,1985) ORDER BY object_name, id;");
+      while ($row = pg_fetch_assoc($result)) {
+	      echo "<tr class=\"rundbrun\">\n";
+	      echo "<td>${row['object_name']}</td>";
+	      echo "<td>${row['comment']}</td>";
+	      echo "<td><a href=\"object.php?object=${row['id']}\">${row['id']}</a></td>";
+	      echo "</tr>\n";
+      }
+?>
 	</table>
 </div>
 <?php
