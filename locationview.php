@@ -256,14 +256,16 @@ page_head("B1 inventory","B1 inventory: Location view");
 			<td>Name</td>
 			<td>Description</td>
 			<td>Object id</td>
+			<td># objects there</td>
 		</tr>
  <?php
-			$result = pg_query($dbconn,"SELECT id,object_name,comment FROM objects WHERE id in (2143,2355,2259,2236,1883,2726,1882,1872,2320,1988,1985) ORDER BY object_name, id;");
+			$result = pg_query($dbconn,"SELECT id,object_name,comment,(select count(*) from (WITH RECURSIVE csl(id) AS (SELECT o.id FROM objects o WHERE o.location=objects.id UNION ALL SELECT o.id FROM csl sl, objects o WHERE sl.id = o.location)SELECT id FROM csl) as foo) as count FROM objects WHERE id in (2143,2355,2259,2236,1883,2726,1882,1872,2320,1988,1985) ORDER BY object_name, id;");
       while ($row = pg_fetch_assoc($result)) {
 	      echo "<tr class=\"rundbrun\">\n";
 	      echo "<td>${row['object_name']}</td>";
 	      echo "<td>${row['comment']}</td>";
 	      echo "<td><a href=\"object.php?object=${row['id']}\">${row['id']}</a></td>";
+	      echo "<td><a href=\"objects.php?condition=id in (WITH RECURSIVE csl(id) AS (SELECT o.id FROM objects o WHERE o.location=${row['id']} UNION ALL SELECT o.id FROM csl sl, objects o WHERE sl.id = o.location) SELECT id FROM csl)\">${row['count']}</a></td>";
 	      echo "</tr>\n";
       }
 ?>
