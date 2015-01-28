@@ -8,7 +8,7 @@ $enable_location_select=true;
 
 
 function list_object_at($dbconn,$object,$name) {
-	$result = pg_query($dbconn,"SELECT * FROM objects WHERE location=$object AND trim(both from location_description) = '$name';");
+	$result = pg_query($dbconn,"SELECT * FROM objects WHERE location=$object AND trim(both from location_description) = trim (both from '$name');");
 	if (pg_num_rows($result)>0) {
 		while ($row=pg_fetch_assoc($result)) {
 			echo "<td>\n";
