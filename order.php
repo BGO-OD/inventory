@@ -220,7 +220,7 @@ echo "</tr>\n";
 echo "<tr><td>Ordered by   </td>";
 echo "<td><SELECT name=\"besteller\">";
 echo "<OPTION value=\"-\">&nbsp;</OPTION>";
-$result=pg_query($dbconn,"select userid, name from users ORDER BY split_part(name,' ',2);");
+$result=pg_query($dbconn,"select userid, name, (select count(*) from orders where besteller=userid) as howoften from users order by howoften desc,  split_part(name,' ',2);");
 while ($row=pg_fetch_assoc($result)) {
 	if ($row['name'] == $bestellername) $sel = "selected";
 	else $sel = "";
@@ -232,7 +232,7 @@ echo "</tr>\n";
 
 echo "<tr><td>Signed by    </td><td><SELECT name=\"signed_by\">";
 echo "<OPTION value=\"-\">&nbsp;</OPTION>";
-$result=pg_query($dbconn,"select userid, name from users;");
+$result=pg_query($dbconn,"select userid, name, (select count(*) from orders where signed_by=userid) as howoften from users order by howoften desc,  split_part(name,' ',2);");
 while ($row=pg_fetch_assoc($result)) {
 	if ($row['name'] == $signature_name) $sel = "selected";
 	else $sel = "";
