@@ -154,7 +154,7 @@ if ($condition=="") {
 		echo "object_name: <input type=\"text\" name=\"object_name\" size=\"20\"><br>\n";
 		echo "Location: ";
 		
-		select_location('',$last_location);
+		select_location($dbconn,'',$last_location);
 		echo "<br/>";
 		echo "institute inventory: <input type=\"text\" name=\"institute_inventory_number\" size=\"60\"  value=\"\"><br>\n";
 		echo "order number: <input type=\"text\" name=\"order_number\" size=\"60\"  value=\"\"><br>\n";
