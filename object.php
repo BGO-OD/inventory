@@ -104,7 +104,7 @@ $object=$row['id'];
 
 
 page_head("B1 inventory","B1 inventory: Object $object");
-echo "<div id=content><h1>Object $object<img src=\"barcode.php?number=$object\"></h1>";
+echo "<div id=content><h1>Object $object</h1>";
 
 echo "<form action=\"object.php?object=$object\" method=\"POST\">";
 

@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $result = pg_query($dbconn, "SELECT id,manufacturer,name,model,type,object_name, sublocations FROM objects INNER JOIN models  USING (model) WHERE id=$object;");
 $row=pg_fetch_assoc($result);
 
-echo "<div id=content><h1>Crate view of ${row['type']} ${row['object_name']} $object<img src=\"barcode.php?number=$object\"></h1>";
+echo "<div id=content><h1>Crate view of ${row['type']} ${row['object_name']} $object</h1>";
 echo "Which is a ${row['manufacturer']} ${row['name']}<br>\n";
 
 $sublocations=$row['sublocations'];
