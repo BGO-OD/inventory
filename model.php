@@ -167,7 +167,7 @@ echo "<tr class=\"rundbrun\">";
 echo "<form enctype=\"multipart/form-data\" action=\"model.php?model=$model\" method=\"POST\">\n";
 echo "    <!-- MAX_FILE_SIZE must precede the file input field -->\n";
 echo "    <input type=\"hidden\" name=\"MAX_FILE_SIZE\" value=\"30000000\" />\n";
-echo '    <!-- Name of input element determines name in $_FILES array -->\n';
+echo '    <!-- Name of input element determines name in $_FILES array -->'."\n";
 echo "<td></td>";
 echo "<td>file: <input name=\"userfile\" type=\"file\" /></td>\n";
 echo "<td><input type=\"text\" name=\"comment\" size=20 value=\"\"></td>";
