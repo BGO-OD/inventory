@@ -70,8 +70,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$query.="'". pg_escape_string($dbconn,$_POST['name']) . "', ";
 		$query.="'". pg_escape_string($dbconn,$_POST['ordernumber']) . "', ";
 		$query.="'". pg_escape_string($dbconn,$_POST['company']) . "', ";
-		if (isset($_POST['orderdate'])   && !empty($_POST['orderdate']))   $query.="'". pg_escape_string($dbconn,$_POST['orderdate']) . "', "; else $query.="NULL, ";
-		if (isset($_POST['invoicedate']) && !empty($_POST['invoicedate'])) $query.="'". pg_escape_string($dbconn,$_POST['invoicedate']) . "', "; else $query.="NULL, ";
+		if (isset($_POST['orderdate'])   && !empty($_POST['orderdate'])) {
+			$orderdatets = strtotime($_POST['orderdate']);
+			if ($orderdatets === false || $orderdatets == -1) {
+				echo "<h2>Error: unrecognized date format for order date</h2>";
+				$query.="NULL, ";
+			} else {
+				$query.="'". pg_escape_string($dbconn,date("Y-m-d",$orderdatets)) . "', ";
+			}
+		} else {
+			$query.="NULL, ";
+		}
+		if (isset($_POST['invoicedate']) && !empty($_POST['invoicedate'])) {
+			$invoicedatets = strtotime($_POST['invoicedate']);
+			if ($invoicedatets === false || $invoicedatets == -1) {
+				echo "<h2>Error: unrecognized date format for invoice date</h2>";
+				$query.="NULL, ";
+			} else {
+				$query.="'". pg_escape_string($dbconn,date("Y-m-d",$invoicedatets)) . "', ";
+			}
+		} else {
+			$query.="NULL, ";
+		}
 		$query.="'". pg_escape_string($dbconn,$_POST['account']) . "', ";
 		if (isset($_POST['netto'])  && !empty($_POST['netto']))  $query.=pg_escape_string($dbconn,$_POST['netto']) . ", "; else $query.="NULL, ";
 		if (isset($_POST['brutto']) && !empty($_POST['brutto'])) $query.=pg_escape_string($dbconn,$_POST['brutto']) . ", "; else $query.="NULL, ";
@@ -242,7 +262,7 @@ echo "</SELECT></td>";
 if (!$neworder) echo "<td><button name=\"submit\" type=\"submit\" value=\"update signed_by\" >Update</button></td>";
 echo "</tr>\n";
 
-if ($neworder) echo "<tr><td colspan=\"2\"><button name=\"submit\" type=\"submit\" value=\"create order\" >New Order</button></td></tr>\n";
+if ($neworder) echo "<tr><td colspan=\"2\"><button name=\"submit\" type=\"submit\" value=\"create order\" >Save</button></td></tr>\n";
 else {
 	echo "</table>\n";
 	echo "<h2>Comments</h2>\n";
