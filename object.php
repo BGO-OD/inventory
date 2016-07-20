@@ -70,14 +70,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		break;
 	case 'add object_weblink':
 		if($_POST['link'] != "") {
-			$result=pg_query($dbconn,"INSERT INTO object_files (object,link,comment) VALUES ($object,'{$_POST['link']}','$comment'); ");
+			$result=pg_query($dbconn,"INSERT INTO object_files (object,link,comment) VALUES ($object,'{$_POST['link']}','".pg_escape_string($_POST['comment'])."'); ");
 		} else {
 			echo "<h2>Error: empty link</h2>";
 		}
 		break;
 	case 'update object_file':
 		if($_POST['link'] != "") {
-			$result=pg_query($dbconn,"UPDATE object_files SET link='".pg_escape_string($_POST['link'])."',comment='$comment' WHERE linkid=".pg_escape_string($_GET['linkid']).";");
+			$result=pg_query($dbconn,"UPDATE object_files SET link='".pg_escape_string($_POST['link'])."',comment='".pg_escape_string($_POST['comment'])."' WHERE linkid=".pg_escape_string($_GET['linkid']).";");
 		} else {
 			echo "<h2>Error: empty link</h2>";
 		}
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			pg_query($dbconn, "begin");
 			$oid = pg_lo_import($dbconn,$_FILES['userfile']['tmp_name']);
 			pg_query($dbconn,"INSERT INTO files (file_name,mimetype,file,size) VALUES ('{$_FILES['userfile']['name']}', '{$_FILES['userfile']['type']}', $oid ,'{$_FILES['userfile']['size']}' );");
-			$result=pg_query($dbconn,"INSERT INTO object_files (object,link,comment) VALUES ($object,'file.php?oid=$oid','$comment'); ");
+			$result=pg_query($dbconn,"INSERT INTO object_files (object,link,comment) VALUES ($object,'file.php?oid=$oid','".pg_escape_string($_POST['comment'])."'); ");
 			pg_query($dbconn, "commit");
 		} else {
 			echo "<h2>Error uploading file. Error Code:" . $_FILES['userfile']['error'] ."</h2>";
@@ -306,7 +306,7 @@ echo "<td></td>";
 echo "</tr>\n";
 while ($row=pg_fetch_assoc($result)) {
 	echo "<tr class=\"rundbrun\">";
-	echo "<form action=\"onject.php?object=$object&linkid={$row['linkid']}\" method=\"POST\">\n";
+	echo "<form action=\"object.php?object=$object&linkid={$row['linkid']}\" method=\"POST\">\n";
 	echo "<td><a href=\"{$row['link']}\">{$row['linkid']}</a></td>";
 	echo "<td><input type=\"text\" name=\"link\" size=50 value=\"{$row['link']}\"></td>";
 	echo "<td><input type=\"text\" name=\"comment\" size=20 value=\"{$row['comment']}\"></td>";
