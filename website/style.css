@@ -68,7 +68,7 @@ img, a img {
 }
 
 #header {
-		background: url("../images/body.png") repeat-x;
+		background: url("images/body.png") repeat-x;
 		color: #768998;
 		height: 116px;
 		font-size: 72.5%;

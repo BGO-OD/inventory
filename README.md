@@ -21,3 +21,5 @@ Use website-subfolder as webroot.
 ### Configuration
 
 Create `config.local.php` and override settings from `config.php`. 
+
+Add a logo and favicon! 

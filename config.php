@@ -1,9 +1,12 @@
 <?php
 
 $PROJECT_NAME="My Inventory";
-$PROJECT_URL="http://localhost/inventory";
-$PROJECT_LOGO="images/somelogo.png";
 $PROJECT_SUBTITLE="My fancy inventory";
+
+$PROJECT_URL="http://localhost/inventory";
+
+$PROJECT_LOGO="images/somelogo.png";
+$PROJECT_FAVICON="favicon.ico";
 
 $DB_HOST="localhost";
 $DB_PORT="5432";
