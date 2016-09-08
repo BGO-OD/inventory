@@ -276,5 +276,64 @@ function select_owner($dbconn,$oldowner="") {
 
 
 
+function page_head($title, $name, $refresh_interval=0) {
+		global $PROJECT_NAME, $PROJECT_URL, $PROJECT_LOGO, $PROJECT_SUBTITLE;
+		
+    echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\"\n";
+    echo "                 \"http://www.w3.org/TR/html4/strict.dtd\">\n";
+    echo "<HTML>\n";
+    echo "<HEAD>\n";
+    echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"> \n";
+		if ($refresh_interval > 0) {
+				echo "<meta http-equiv=\"refresh\" content=\"".$refresh_interval."\">\n";
+		}
+    echo "<TITLE>$name</TITLE>\n";
+    echo "<link rel=\"SHORTCUT ICON\" href=\"favicon.ico\">\n";
+    echo "<link type=\"text/css\" rel=\"stylesheet\" href=\"style.css\">\n";
+    
+    extra_header_content();
+    
+    echo "</HEAD>\n";
+    echo "\n";
+    echo "<BODY>\n";
 
+    if (!isset($_GET['nonavi'])) {
+				echo "<div id=header>\n";
+				echo "  <div id=page-title>\n";
+				echo "      <h1> <a href=\"./index.php\" title=\"$title\">$title</a></h1>\n";
+				echo "  </div>\n";
+				echo "  <div id=\"logo\">\n";
+				echo "      <a href=\"$PROJECT_URL\" title=\"$PROJECT_NAME\"><img src=\"$PROJECT_LOGO\" alt=\"$PROJECT_NAME\" /></a>\n";
+				echo "  </div>\n";
+				echo "  <div id=\"slogan-floater\">\n";
+				echo "      <h1 class='site-name'><a href=\"$PROJECT_URL\" title=\"$PROJECT_NAME\">$PROJECT_NAME</a></h1>\n";
+				echo "      <div class='site-slogan'>$PROJECT_SUBTITLE</div>\n";
+				echo "  </div>\n";
+				echo "</div>\n";
+
+				echo "<div id=main>";
+				navigation_bar();
+    } else {
+				echo "<div id=main>";
+		}
+}
+
+
+
+function page_foot() {
+	  echo "</DIV>\n";
+		echo "</DIV>\n";
+		echo "</body>\n";
+}
+
+
+function show_table($dbconn,$selection,$table,$items) {
+		$result = pg_query($dbconn,"SELECT $selection FROM $table;");
+		while ($row=pg_fetch_assoc($result)) {
+				echo "<tr class=\"rundbrun\">";
+				foreach ($items as $item) {
+				}
+				echo "</tr>\n";
+		}
+}
 ?>

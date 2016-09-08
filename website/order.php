@@ -1,5 +1,5 @@
 <?php
-include '../common/page_functions.php';
+
 include 'functions.php';
 include 'variables.php';
 

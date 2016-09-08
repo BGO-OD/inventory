@@ -1,14 +1,12 @@
 <?php
 
-include '../common/page_functions.php';
-include 'functions.php';
 include 'variables.php';
+include 'functions.php';
 
-page_head($project_name, $project_name);
+
+page_head($PROJECT_NAME, $PROJECT_NAME);
 
 echo '<div id=content><h1></h1>';
-
-include '../common/svn_version.php';
 
 echo "<h2>Next Maintenances to be performed:</h2>\n";
 $dbconn = pg_connect($dbstring);
