@@ -251,8 +251,8 @@ page_head("B1 inventory","B1 inventory: Location view");
 		c.addEventListener("click", on_click, false);
 	</script>
 	<h2>Other Locations</h2>
-	<table class="rundbtable">
-		<tr class="rundbhead">
+	<table class="tabletable">
+		<tr class="tablehead">
 			<td>Name</td>
 			<td>Description</td>
 			<td>Object id</td>
@@ -261,7 +261,7 @@ page_head("B1 inventory","B1 inventory: Location view");
  <?php
 			$result = pg_query($dbconn,"SELECT id,object_name,comment,(select count(*) from (WITH RECURSIVE csl(id) AS (SELECT o.id FROM objects o WHERE o.location=objects.id UNION ALL SELECT o.id FROM csl sl, objects o WHERE sl.id = o.location)SELECT id FROM csl) as foo) as count FROM objects WHERE id in (2143,2355,2259,2236,1883,2726,1882,1872,2320,1988,1985) ORDER BY object_name, id;");
       while ($row = pg_fetch_assoc($result)) {
-	      echo "<tr class=\"rundbrun\">\n";
+	      echo "<tr class=\"tablerow\">\n";
 	      echo "<td>${row['object_name']}</td>";
 	      echo "<td>${row['comment']}</td>";
 	      echo "<td><a href=\"object.php?object=${row['id']}\">${row['id']}</a></td>";

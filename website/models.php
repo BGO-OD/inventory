@@ -47,9 +47,9 @@ if ($condition=="") {
 		echo "<a href=\"models.php?condition=type='{$row['type']}'\">List of {$row['type']}s</a><br>\n";
 	}
 } else {
-	echo "<table class=\"rundbtable\">\n";
+	echo "<table class=\"tabletable\">\n";
 	
-	echo "<tr class=\"rundbhead\">";
+	echo "<tr class=\"tablehead\">";
 	echo "<td>model</td>";
 	echo "<td>type</td>";
 	echo "<td>manufacturer</td>";
@@ -73,7 +73,7 @@ if ($condition=="") {
 			(SELECT count(*) FROM objects INNER JOIN usage USING (id) WHERE objects.model=models.model AND now() between validfrom AND validto AND userid!=36) as nused
 			FROM models $condition ORDER BY model DESC;");
 	while ($row=pg_fetch_assoc($result)) {
-		echo "<tr class=\"rundbrun\">";
+		echo "<tr class=\"tablerow\">";
 		echo "<td><a href=\"model.php?model={$row['model']}\">{$row['model']}</a></td>";
 		echo "<td>{$row['type']}</td>";
 		echo "<td><a href=\"models.php?condition=manufacturer='{$row['manufacturer']}'\">{$row['manufacturer']}</a></td>";

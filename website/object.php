@@ -108,7 +108,7 @@ echo "<div id=content><h1>Object $object</h1>";
 
 echo "<form action=\"object.php?object=$object\" method=\"POST\">";
 
-echo "<table class=\"rundbtable\">\n";
+echo "<table class=\"tabletable\">\n";
 
 echo "<tr><td>object id</td>";
 echo "<td><a href=\"object.php?object='".$row['id']."'\">".$row['id']."</a></td>";
@@ -210,9 +210,9 @@ echo "comment: <input type=\"text\" name=\"maint_comment\" size=\"60\" value=\"\
 echo "<button name=\"submit\" type=\"submit\" value=\"maintain\" >Enter maintenance data</button><br>\n";
 echo "</form>";
 
-echo "<table class=\"rundbtable\">\n";
+echo "<table class=\"tabletable\">\n";
 
-echo "<tr class=\"rundbhead\">";
+echo "<tr class=\"tablehead\">";
 echo "<td>date</td>";
 echo "<td>responsible</td>";
 echo "<td>status</td>";
@@ -221,7 +221,7 @@ echo "</tr>\n";
 
 $result = pg_query($dbconn, "SELECT * FROM maintenance LEFT OUTER JOIN users ON maintenance.responsible=users.userid WHERE id=$object ORDER BY date DESC;");
 while ($row=pg_fetch_assoc($result)) {
-	echo "<tr class=\"rundbrun\">";
+	echo "<tr class=\"tablerow\">";
 	echo "<td>".$row['date']."</td>";
 	echo "<td>".$row['name']."</td>";
 	echo "<td>".$row['status']."</td>";
@@ -232,8 +232,8 @@ echo "</table>\n";
 
 echo "<h2>Usage history</h2>\n";
 
-echo "<table class=\"rundbtable\">\n";
-echo "<tr class=\"rundbhead\">";
+echo "<table class=\"tabletable\">\n";
+echo "<tr class=\"tablehead\">";
 echo "<td>From</td>";
 echo "<td>Till</td>";
 echo "<td>used by</td>";
@@ -241,7 +241,7 @@ echo "<td>comment</td>";
 echo "</tr>\n";
 $result = pg_query($dbconn,"SELECT * FROM usage INNER JOIN users USING (userid) WHERE id=$object ORDER BY validfrom DESC;");
 while ($row=pg_fetch_assoc($result)) {
-	echo "<tr class=\"rundbrun\">";
+	echo "<tr class=\"tablerow\">";
 	echo "<td>{$row['validfrom']}</td>";
 	echo "<td>{$row['validto']}</td>";
 	echo "<td>{$row['name']}</td>";
@@ -254,8 +254,8 @@ echo "</table>\n";
 if ($sublocations!="") {
 	echo "<h2>Objects at this location</h2>\n";
 	echo "<a class=\"navbutton\" href=\"crateview.php?object=$object\">Crate View</a><br>\n";
-	echo "<table class=\"rundbtable\">\n";
-	echo "<tr class=\"rundbhead\">";
+	echo "<table class=\"tabletable\">\n";
+	echo "<tr class=\"tablehead\">";
 	echo "<td>id</td>";
 	echo "<td>loc. desc.</td>";
 	echo "<td>type</td>";
@@ -266,7 +266,7 @@ if ($sublocations!="") {
 	echo "</tr>\n";
 	$result = pg_query($dbconn, "SELECT id, location_description, type, manufacturer, models.name, object_name, objects.comment FROM objects inner join models using (model)  WHERE location=$object ORDER BY COALESCE(location_description,''), id;");
 	while ($row=pg_fetch_assoc($result)) {
-		echo "<tr class=\"rundbrun\">";
+		echo "<tr class=\"tablerow\">";
 		echo "<td><a href=\"object.php?object=".$row['id']."\">".$row['id']."</a></td>";
 		echo "<td>".$row['location_description']."</td>";
 		echo "<td>".$row['type']."</td>";
@@ -281,13 +281,13 @@ if ($sublocations!="") {
 
 echo "<h2>Documentation links</h2>\n";
 $result = pg_query($dbconn,"SELECT * FROM model_weblinks WHERE model=$model;");
-echo "<table class=\"rundbtable\">\n";
-echo "<tr class=\"rundbhead\">";
+echo "<table class=\"tabletable\">\n";
+echo "<tr class=\"tablehead\">";
 echo "<td>link</td>";
 echo "<td>comment</td>";
 echo "</tr>\n";
 while ($row=pg_fetch_assoc($result)) {
-	echo "<tr class=\"rundbrun\">";
+	echo "<tr class=\"tablerow\">";
 	echo "<form action=\"model.php?model=$model&linkid={$row['linkid']}\" method=\"POST\">\n";
 	echo "<td><a href=\"{$row['link']}\">{$row['link']}</a></td>";
 	echo "<td>{$row['comment']}</td>";
@@ -297,15 +297,15 @@ echo "</table>\n";
 
 echo "<h2>Individual file links</h2>\n";
 $result = pg_query($dbconn,"SELECT * FROM object_files WHERE object=$object ORDER BY linkid;");
-echo "<table class=\"rundbtable\">\n";
-echo "<tr class=\"rundbhead\">";
+echo "<table class=\"tabletable\">\n";
+echo "<tr class=\"tablehead\">";
 echo "<td>id</td>";
 echo "<td>link</td>";
 echo "<td>comment</td>";
 echo "<td></td>";
 echo "</tr>\n";
 while ($row=pg_fetch_assoc($result)) {
-	echo "<tr class=\"rundbrun\">";
+	echo "<tr class=\"tablerow\">";
 	echo "<form action=\"object.php?object=$object&linkid={$row['linkid']}\" method=\"POST\">\n";
 	echo "<td><a href=\"{$row['link']}\">{$row['linkid']}</a></td>";
 	echo "<td><input type=\"text\" name=\"link\" size=50 value=\"{$row['link']}\"></td>";
@@ -314,7 +314,7 @@ while ($row=pg_fetch_assoc($result)) {
 	echo "</form>\n";
 	echo "</tr>\n";
  }
-echo "<tr class=\"rundbrun\">";
+echo "<tr class=\"tablerow\">";
 echo "<form action=\"object.php?object=$object\" method=\"POST\">\n";
 echo "<td></td>";
 echo "<td><input type=\"text\" name=\"link\" size=50 value=\"\"></td>";
@@ -322,7 +322,7 @@ echo "<td><input type=\"text\" name=\"comment\" size=20 value=\"\"></td>";
 echo "<td><button name=\"submit\" type=\"submit\" value=\"add object_weblink\" >Add</button></td>\n";
 echo "</form>\n";
 echo "</tr>\n";
-echo "<tr class=\"rundbrun\">";
+echo "<tr class=\"tablerow\">";
 echo "<form enctype=\"multipart/form-data\" action=\"object.php?object=$object\" method=\"POST\">\n";
 echo "    <!-- MAX_FILE_SIZE must precede the file input field -->\n";
 echo "    <input type=\"hidden\" name=\"MAX_FILE_SIZE\" value=\"30000000\" />\n";

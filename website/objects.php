@@ -96,9 +96,9 @@ if ($condition=="") {
 	echo pg_num_rows($result);
 	echo " objects found<br>\n";
 
-	echo "<table class=\"rundbtable\">\n";
+	echo "<table class=\"tabletable\">\n";
 	
-	echo "<tr class=\"rundbhead\">";
+	echo "<tr class=\"tablehead\">";
 	echo "<td>id</td>";
 	echo "<td>type</td>";
 	echo "<td>manufacturer</td>";
@@ -114,7 +114,7 @@ if ($condition=="") {
 
 
 	while ($row=pg_fetch_assoc($result)) {
-		echo "<tr class=\"rundbrun\">";
+		echo "<tr class=\"tablerow\">";
 		echo "<td><a href=\"object.php?object='".$row['id']."'\">".$row['id']."</a></td>";
 		
 		echo "<td><a href=\"models.php?condition=type='".$row['type']."'\">".$row['type']."</a></td>";

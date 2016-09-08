@@ -23,9 +23,9 @@
 
 	echo '<a href="order.php">New Order</a>';
 
-	echo "<table class=\"rundbtable\">\n";
+	echo "<table class=\"tabletable\">\n";
 	
-	echo "<tr class=\"rundbhead\">";
+	echo "<tr class=\"tablehead\">";
 	echo "<td>Order Number</td>";
 	echo "<td>Summary</td>";
 	echo "<td>Company</td>";
@@ -40,7 +40,7 @@
 	$result = pg_query($dbconn, "SELECT number,ordernumber, name, company, orderdate, invoicedate, netto, brutto, currency, amount, besteller, (select count(*) from order_weblinks where order_weblinks.number = orders.number) as attachments, (select count(*) from ordercomments where ordercomments.number = orders.number) as comments,(SELECT name FROM users WHERE userid=signed_by) AS signature, (SELECT count(id) FROM objects WHERE order_number LIKE ('%' || ordernumber || '%')) AS inventorycounts, (SELECT name FROM users WHERE userid=besteller) as bestellername FROM orders ${condition} ORDER BY number DESC;");
 
 	while ($row=pg_fetch_assoc($result)) {
-		echo "<tr class=\"rundbrun\">";
+		echo "<tr class=\"tablerow\">";
 		echo "<td>"; if ($row['inventorycounts'] > 0) echo "<a href=\"objects.php?condition=order_number LIKE '%25${row['ordernumber']}%25'\">${row['ordernumber']}</a>"; else echo $row['ordernumber']; echo "</td>";
 		echo "<td><a href=\"order.php?order={$row['number']}\">{$row['name']}</a></td>";
 		echo "<td><a href=\"orders.php?condition=company='".urlencode($row['company'])."'\">{$row['company']}</a></td>";

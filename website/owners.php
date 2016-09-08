@@ -17,16 +17,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
  }
 
 echo '<div id=content><h1>Owners</h1>';
-echo "<table class=\"rundbtable\">\n";
+echo "<table class=\"tabletable\">\n";
 
-echo "<tr class=\"rundbhead\">";
+echo "<tr class=\"tablehead\">";
 echo "<td>owner id</td>";
 echo "<td>name</td>";
 echo "</tr>\n";
 
 $result = pg_query($dbconn, "SELECT * FROM owners;");
 while ($row=pg_fetch_assoc($result)) {
-	echo "<tr class=\"rundbrun\">";
+	echo "<tr class=\"tablerow\">";
 	echo "<td>{$row['ownerid']}</td>";
 	echo "<td><a href=\"objects.php?condition=ownerid={$row['ownerid']}\">{$row['owner_name']}</a></td>";
 	echo "</tr>\n";

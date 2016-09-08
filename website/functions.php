@@ -330,7 +330,7 @@ function page_foot() {
 function show_table($dbconn,$selection,$table,$items) {
 		$result = pg_query($dbconn,"SELECT $selection FROM $table;");
 		while ($row=pg_fetch_assoc($result)) {
-				echo "<tr class=\"rundbrun\">";
+				echo "<tr class=\"tablerow\">";
 				foreach ($items as $item) {
 				}
 				echo "</tr>\n";

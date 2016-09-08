@@ -11,14 +11,14 @@ if (!$dbconn) {
 };
 
 echo "\n".'<div id=content>'."\n\t".'<h1>Guest Keys HSAG</h1>'."\n";
-echo "\t<table class=\"rundbtable\">\n";
+echo "\t<table class=\"tabletable\">\n";
 
-echo "\t\t<tr class=\"rundbhead\">";
+echo "\t\t<tr class=\"tablehead\">";
 echo "<td>Mechanical Key Nr.</td>";
 echo "<td colspan=\"2\">Electronic Key Nr.</td>";
 echo "<td rowspan=\"2\">Used by:</td>";
 echo "</tr>\n";
-echo "\t\t<tr class=\"rundbhead\">";
+echo "\t\t<tr class=\"tablehead\">";
 echo "<td>Office (HR7)</td>";
 echo "<td>With Hall Access</td>";
 echo "<td>No Hall Access</td>";
@@ -38,7 +38,7 @@ $result = pg_query($dbconn, "
 	ORDER BY serial::int;
 	");
 while ($row=pg_fetch_assoc($result)) {
-	echo "\t\t<tr class=\"rundbrun\">";
+	echo "\t\t<tr class=\"tablerow\">";
 	echo "<td><a href=\"object.php?object={$row['id']}\">{$row['serial']}</a></td>";
 	echo "<td><a href=\"object.php?object={$row['withhallaccessid']}\">{$row['withhallaccess']}</a></td>";
 	echo "<td><a href=\"object.php?object={$row['withouthallaccessid']}\">{$row['withouthallaccess']}</a></td>";
@@ -46,7 +46,7 @@ while ($row=pg_fetch_assoc($result)) {
 	echo "</tr>\n";
 }
 
-echo "\t\t<tr class=\"rundbhead\">";
+echo "\t\t<tr class=\"tablehead\">";
 echo "<td>Office (HR6)</td>";
 echo "<td>With Hall Access</td>";
 echo "<td>No Hall Access</td>";
@@ -67,7 +67,7 @@ $result = pg_query($dbconn, "
 	ORDER BY serial::int;
 	");
 while ($row=pg_fetch_assoc($result)) {
-	echo "\t\t<tr class=\"rundbrun\">";
+	echo "\t\t<tr class=\"tablerow\">";
 	echo "<td><a href=\"object.php?object={$row['id']}\">{$row['serial']}</a></td>";
 	echo "<td><a href=\"object.php?object={$row['withhallaccessid']}\">{$row['withhallaccess']}</a></td>";
 	echo "<td><a href=\"object.php?object={$row['withouthallaccessid']}\">{$row['withouthallaccess']}</a></td>";
@@ -75,7 +75,7 @@ while ($row=pg_fetch_assoc($result)) {
 	echo "</tr>\n";
 }
 
-echo "\t\t<tr class=\"rundbhead\">";
+echo "\t\t<tr class=\"tablehead\">";
 echo "<td></td>";
 echo "<td>With Hall Access</td>";
 echo "<td>No Hall Access</td>";
@@ -96,7 +96,7 @@ $result = pg_query($dbconn, "
 	ORDER BY serial;
 	");
 while ($row=pg_fetch_assoc($result)) {
-	echo "\t\t<tr class=\"rundbrun\">";
+	echo "\t\t<tr class=\"tablerow\">";
 	echo "<td></td>";
 	if ($row['comment'] == "hall access") echo "<td><a href=\"object.php?object={$row['id']}\">{$row['serial']}</a></td>"; else echo "<td></td>";
 	if ($row['comment'] == "without hall access") echo "<td><a href=\"object.php?object={$row['id']}\">{$row['serial']}</a></td>"; else echo "<td></td>";
@@ -104,7 +104,7 @@ while ($row=pg_fetch_assoc($result)) {
 	echo "</tr>\n";
 }
 
-echo "\t\t<tr class=\"rundbhead\">";
+echo "\t\t<tr class=\"tablehead\">";
 echo "<td colspan=\"3\">Wesselhalle (1/4)</td>";
 echo "<td>Used by:</td>";
 echo "</tr>\n";
@@ -118,7 +118,7 @@ $result = pg_query($dbconn, "
 	WHERE model=302
 	ORDER BY serial::int;");
 while ($row=pg_fetch_assoc($result)) {
-	echo "\t\t<tr class=\"rundbrun\">";
+	echo "\t\t<tr class=\"tablerow\">";
 	echo "<td colspan=\"3\"><a href=\"object.php?object={$row['id']}\">{$row['serial']}</a></td>";
 	echo "<td>{$row['user']}</td>";
 	echo "</tr>\n";

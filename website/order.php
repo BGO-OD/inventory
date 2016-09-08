@@ -168,7 +168,7 @@ if (!$neworder) echo "<div id=content><h1>Order $number</h1>\n";
 else echo "<div id=content><h1>New Order</h1>\n";
 
 echo '<form action="order.php?order='.$order.'" method="POST">'."\n";
-echo "<table class=\"rundbtable\"></tr>\n";
+echo "<table class=\"tabletable\"></tr>\n";
 
 if ($neworder) {
 	echo "<tr><td>Order Number</td>";
@@ -266,8 +266,8 @@ if ($neworder) echo "<tr><td colspan=\"2\"><button name=\"submit\" type=\"submit
 else {
 	echo "</table>\n";
 	echo "<h2>Comments</h2>\n";
-	echo "<table class=\"rundbtable\">\n";
-	echo "<tr class=\"rundbhead\">";
+	echo "<table class=\"tabletable\">\n";
+	echo "<tr class=\"tablehead\">";
 	echo "<td>date</td>";
 	echo "<td colspan=\"2\">comment</td>";
 	echo "</tr>\n";
@@ -289,14 +289,14 @@ echo "</form>\n";
 if (!$neworder) {
 	echo "<h2>Attachments</h2>\n";
 	$result = pg_query($dbconn,"SELECT order_weblinks.link AS link, order_weblinks.comment AS comment, order_weblinks.orderlinkid AS orderlinkid, files.file_name AS filename FROM order_weblinks, files WHERE files.file = order_weblinks.link AND number=$order ORDER BY orderlinkid;");
-	echo "<table class=\"rundbtable\">\n";
-	echo "<tr class=\"rundbhead\">";
+	echo "<table class=\"tabletable\">\n";
+	echo "<tr class=\"tablehead\">";
 	echo "<td>link</td>";
 	echo "<td>comment</td>";
 	echo "<td></td>";
 	echo "</tr>\n";
 	while ($row=pg_fetch_assoc($result)) {
-		echo "<tr class=\"rundbrun\">";
+		echo "<tr class=\"tablerow\">";
 		echo "<form action=\"order.php?order=$order\" method=\"POST\">\n";
 		echo "<td><a href=\"file.php?oid={$row['link']}\">{$row['filename']}</a></td>";
 		echo "<td><input type=\"text\" name=\"comment\" size=20 value=\"{$row['comment']}\"></td>";
@@ -304,7 +304,7 @@ if (!$neworder) {
 		echo "</form>\n";
 		echo "</tr>\n";
 	}
-	echo "<tr class=\"rundbrun\">";
+	echo "<tr class=\"tablerow\">";
 	echo "<form enctype=\"multipart/form-data\" action=\"order.php?order=$order\" method=\"POST\">\n";
 	echo "    <!-- MAX_FILE_SIZE must precede the file input field -->\n";
 	echo "    <input type=\"hidden\" name=\"MAX_FILE_SIZE\" value=\"30000000\" />\n";

@@ -63,7 +63,7 @@ $result = pg_query($dbconn, "SELECT * FROM models WHERE model=$model;");
 $row=pg_fetch_assoc($result);
 
 echo "<form action=\"model.php?model=$model\" method=\"POST\">\n";
-echo "<table class=\"rundbtable\">\n";
+echo "<table class=\"tabletable\">\n";
 
 echo "<tr><td>model id</td>";
 echo "<td>{$row['model']}</td>";
@@ -110,9 +110,9 @@ echo "</form>\n";
 
 
 echo '<h2>Objects </h2>';
-echo "<table class=\"rundbtable\">\n";
+echo "<table class=\"tabletable\">\n";
 
-echo "<tr class=\"rundbhead\">";
+echo "<tr class=\"tablehead\">";
 echo "<td>id</td>";
 echo "<td>serial</td>";
 echo "<td>object name</td>";
@@ -123,7 +123,7 @@ echo "</tr>\n";
 
 $result = pg_query($dbconn, "SELECT id,serial,object_name,location,objects.comment,users.name as username,userid FROM (objects INNER JOIN models  USING (model) ) LEFT OUTER JOIN ( (SELECT id,userid FROM usage WHERE validfrom<now() AND validto>now()) as usage INNER JOIN users USING (userid) ) USING (id) WHERE model=$model ORDER BY id;");
 while ($row=pg_fetch_assoc($result)) {
-	echo "<tr class=\"rundbrun\">";
+	echo "<tr class=\"tablerow\">";
 	echo "<td><a href=\"object.php?object='{$row['id']}'\">{$row['id']}</a></td>";
 	echo "<td>{$row['serial']}</td>";
 	echo "<td>{$row['object_name']}</td>";
@@ -138,15 +138,15 @@ echo "<a href=\"objects.php?condition=model='$model'\">Create an Object of this 
 
 echo "<h2>Documentation links</h2>\n";
 $result = pg_query($dbconn,"SELECT * FROM model_weblinks WHERE model=$model ORDER BY linkid;");
-echo "<table class=\"rundbtable\">\n";
-echo "<tr class=\"rundbhead\">";
+echo "<table class=\"tabletable\">\n";
+echo "<tr class=\"tablehead\">";
 echo "<td>id</td>";
 echo "<td>link</td>";
 echo "<td>comment</td>";
 echo "<td></td>";
 echo "</tr>\n";
 while ($row=pg_fetch_assoc($result)) {
-	echo "<tr class=\"rundbrun\">";
+	echo "<tr class=\"tablerow\">";
 	echo "<form action=\"model.php?model=$model&linkid={$row['linkid']}\" method=\"POST\">\n";
 	echo "<td><a href=\"{$row['link']}\">{$row['linkid']}</a></td>";
 	echo "<td><input type=\"text\" name=\"link\" size=50 value=\"{$row['link']}\"></td>";
@@ -155,7 +155,7 @@ while ($row=pg_fetch_assoc($result)) {
 	echo "</form>\n";
 	echo "</tr>\n";
  }
-echo "<tr class=\"rundbrun\">";
+echo "<tr class=\"tablerow\">";
 echo "<form action=\"model.php?model=$model\" method=\"POST\">\n";
 echo "<td></td>";
 echo "<td><input type=\"text\" name=\"link\" size=50 value=\"\"></td>";
@@ -163,7 +163,7 @@ echo "<td><input type=\"text\" name=\"comment\" size=20 value=\"\"></td>";
 echo "<td><button name=\"submit\" type=\"submit\" value=\"add model_weblink\" >Add</button></td>\n";
 echo "</form>\n";
 echo "</tr>\n";
-echo "<tr class=\"rundbrun\">";
+echo "<tr class=\"tablerow\">";
 echo "<form enctype=\"multipart/form-data\" action=\"model.php?model=$model\" method=\"POST\">\n";
 echo "    <!-- MAX_FILE_SIZE must precede the file input field -->\n";
 echo "    <input type=\"hidden\" name=\"MAX_FILE_SIZE\" value=\"30000000\" />\n";
@@ -179,9 +179,9 @@ echo "</table>\n";
 
 
 echo "<h2>Known problems </h2>\n";
-echo "<table class=\"rundbtable\">\n";
+echo "<table class=\"tabletable\">\n";
 
-echo "<tr class=\"rundbhead\">";
+echo "<tr class=\"tablehead\">";
 echo "<td>id</td>";
 echo "<td>object name</td>";
 echo "<td>date</td>";
@@ -191,7 +191,7 @@ echo "</tr>\n";
 
 $result = pg_query($dbconn, "SELECT id, object_name, date, status, maintenance.comment FROM objects INNER JOIN maintenance  USING (id) WHERE model=$model AND (status~'Broken' OR status~'Problem');");
 while ($row=pg_fetch_assoc($result)) {
-	echo "<tr class=\"rundbrun\">";
+	echo "<tr class=\"tablerow\">";
 	echo "<td><a href=\"object.php?object='{$row['id']}'\">{$row['id']}</a></td>";
 	echo "<td>{$row['object_name']}</td>";
 	echo "<td>{$row['date']}</td>";
