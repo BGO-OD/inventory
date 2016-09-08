@@ -56,11 +56,9 @@ function navigation_bar() {
 	echo "<a class=\"navbutton\" href=\"objects.php?condition=id%20in%20(select%20id%20from%20objects%20natural%20inner%20join%20(select%20model,serial%20from%20(select%20model,%20serial,%20%20count(*)%20%20as%20c%20from%20objects%20inner%20join%20models%20using%20(model)%20where%20serial%20!=%20''%20group%20by%20model,serial)%20as%20foo%20where%20c%3E1)%20as%20bar)&order=model\">Objects ambiguous serial</a>\n";
 	echo "<a class=\"navbutton\" href=\"models.php?condition=maintenance_instructions!~'E-check'%20%20and%20type%20not%20in%20('Photomultiplier','Photomultiplier%20Base','DIN-Rail%20stuff','Board','Location','Detector','Hard%20Disk','NIM%20Module','VME%20Module','HV%20Module')\">Models with no E-check instruction</a>\n";
 	echo "<a class=\"navbutton\" href=\"locationcheck.php\">Location check</a>\n";
-	echo "<a class=\"navbutton\" href=\"locationview.php\">Location view</a>\n";
 	echo "<a class=\"navbutton\" href=\"users.php\">User list</a>\n";
 	echo "<a class=\"navbutton\" href=\"owners.php\">Owner list</a>\n";
 	echo "<a class=\"navbutton\" href=\"orders.php\">Order list</a>\n";
-	echo "<a class=\"navbutton\" href=\"keys.php\">Key list</a>\n";
 	echo "<form action=\"object.php\" method=\"get\">";
 	echo "<div id=navsection>";
 	echo "goto Object ";
