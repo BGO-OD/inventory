@@ -46,6 +46,18 @@ if ($condition=="") {
 	while ($row=pg_fetch_assoc($result)) {
 		echo "<a href=\"models.php?condition=type='{$row['type']}'\">List of {$row['type']}s</a><br>\n";
 	}
+	echo "<h1>Add new model</h1>\n";
+	echo "<form action=\"models.php?$cond\" method=\"post\">";
+	echo "Type: <input type=\"text\" name=\"type\" size=\"20\" value=\"\"><br>";
+	echo "manufacturer: <input type=\"text\" name=\"manufacturer\" size=\"20\" value=\"\"><br>";
+	echo "model name: <input type=\"text\" name=\"name\" size=\"20\"><br>";
+	echo "maintenance interval: <input type=\"text\" name=\"maintenance_interval\" size=\"20\"><br>";
+	echo "maintenance instructions: <input type=\"textarea\" name=\"maintenance_instructions\" rows=\"5\" columns=\"50\"><br>";
+	echo "sublocations: <input type=\"text\" name=\"sublocations\" size=\"60\"  value=\"\"><br>";
+	echo "description: <input type=\"text\" name=\"description\" size=\"60\"  value=\"\"><br>";
+	echo "comment: <input type=\"text\" name=\"comment\" size=\"60\"  value=\"\"><br>";
+	echo '<input type="submit" value="Submit" >';
+	echo "</form>";
 } else {
 	echo "<table class=\"tabletable\">\n";
 	
