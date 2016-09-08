@@ -1,6 +1,5 @@
 <?php
 
-
 include 'functions.php';
 
 $enable_location_select=true;
@@ -17,11 +16,10 @@ if (isset($_GET['name'])) {
 if (isset($_GET['order'])) {
 		$extraorder=$_GET['order'].",";
 }
+$limit="";
 if (isset($_GET['limit'])) {
 		$limit=" LIMIT ".$_GET['limit'];
 }
-
-
 
 page_head("Objects","$PROJECT_NAME: Objects");
 $dbconn = pg_connect($dbstring);
