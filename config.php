@@ -8,6 +8,10 @@ $PROJECT_URL="http://localhost/inventory";
 $PROJECT_LOGO="images/somelogo.png";
 $PROJECT_FAVICON="favicon.ico";
 
+$ORDER_NUMBER_FORMAT = date('Y').".42.";
+$ORDER_ACCOUNTNAME   = "MYORDERACCOUNT";
+$ORDER_CURRENCY      = "EUR";
+
 $DB_HOST="localhost";
 $DB_PORT="5432";
 $DB_NAME="inventory";
