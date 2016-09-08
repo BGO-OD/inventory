@@ -1,6 +1,6 @@
 <?php
 
-include 'variables.php'
+include 'variables.php';
 
 $enable_location_select=false;
 
