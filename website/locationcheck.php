@@ -26,6 +26,9 @@ if (isset($_REQUEST['presentitems'])) {
 	$presentitems=preg_split('/[\s,]+/',$_REQUEST['presentitems'],-1,PREG_SPLIT_NO_EMPTY);
 }
 
+$locationname="<= ";
+$locationcomment="invalid location";
+
 $location="";
 if (isset($_REQUEST['location'])) {
 	$location=$_REQUEST['location'];
@@ -98,7 +101,11 @@ if (isset($_REQUEST['location'])) {
 	                                     models.model = objects.model AND
 	                                     id IN ($1)
 	                                   ORDER BY objects.id;');
-	$result = pg_execute($dbconn, "", array(join(',',$supernumeraryitems)));
+	$itemsArray = array(join(',',$supernumeraryitems));
+	if (sizeof($itemsArray) == 1) {
+			$itemsArray=array("0");
+	}
+	$result = pg_execute($dbconn, "", $itemsArray);
 	if (pg_num_rows($result)>0) {
 		while ($row=pg_fetch_assoc($result)) {
 			$items[] = $row;
