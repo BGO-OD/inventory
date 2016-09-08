@@ -1,0 +1,5 @@
+# Short project name. 
+PROJECT_SHORT="TEST"
+
+# Base to use for the EAN8 barcodes. 
+BARCODEBASE=4200000

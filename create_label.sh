@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source barcodebase
+
 ncol=1;
 nrow=1;
 
@@ -27,7 +29,7 @@ cat <<EOD
 gsave
 -10 72 25.4 div add 4.5 translate
 EOD
-barcode -b $[ 5500000 + $number ] -e ean8 -u mm -g 17x4 -n -E
+barcode -b $[ $BARCODEBASE + $number ] -e ean8 -u mm -g 17x4 -n -E
 cat <<EOD
 grestore
 /Helvetica findfont
@@ -41,7 +43,7 @@ show
 /Helvetica findfont
 12 scalefont setfont
 $labelwidth 72 25.4 div 26.5 moveto
-(BGO-OD) show
+($PROJECT_SHORT) show
 showpage
 EOD
 
