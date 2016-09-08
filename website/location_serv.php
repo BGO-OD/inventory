@@ -1,6 +1,6 @@
 <?php
 
-include 'variables.php';
+
 include 'functions.php';
 
 $dbconn = pg_connect($dbstring);

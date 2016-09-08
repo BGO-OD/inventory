@@ -2,7 +2,7 @@
 
 
 include 'functions.php';
-include 'variables.php';
+
 $enable_location_select=true;
 
 if (isset($_GET['condition'])) {
@@ -22,7 +22,7 @@ if (isset($_GET['limit'])) {
 
 
 
-page_head("Objects","B1 inventory: Objects");
+page_head("Objects","$PROJECT_NAME: Objects");
 $dbconn = pg_connect($dbstring);
 if (!$dbconn) {
 	  die('Could not connect: ' . pg_last_error());

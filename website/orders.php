@@ -1,7 +1,7 @@
 <?php
 	
 	include 'functions.php';
-	include 'variables.php';
+	
 
 	function dateFromPostgres($date) {
 		return DateTime::createFromFormat('Y-m-d G:i:s', $date)->format('d.m.Y');
@@ -13,7 +13,7 @@
 		$condition="";
 	}
 
-	page_head("Orders","B1 inventory: Orders");
+	page_head("Orders","$PROJECT_NAME: Orders");
 	$dbconn = pg_connect($dbstring);
 	if (!$dbconn) {
 		die('Could not connect: ' . pg_last_error());

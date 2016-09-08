@@ -2,14 +2,14 @@
 
 
 include 'functions.php';
-include 'variables.php';
+
 
 $dbconn = pg_connect($dbstring);
 if (!$dbconn) {
 	  die('Could not connect: ' . pg_last_error());
 }
 
-page_head("B1 inventory","B1 inventory: Location view");
+page_head("$PROJECT_NAME","$PROJECT_NAME: Location view");
 ?>
 <div id=content>
 	<h2>Location Overview</h2>

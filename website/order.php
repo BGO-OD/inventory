@@ -1,7 +1,7 @@
 <?php
 
 include 'functions.php';
-include 'variables.php';
+
 
 function dateFromPostgres($date) {
 	return DateTime::createFromFormat('Y-m-d G:i:s', $date)->format('d.m.Y');
@@ -15,7 +15,7 @@ if (isset($_GET['order']) && is_numeric($_GET['order'])) {
 
 $neworder = false;
 
-page_head("Order","B1 inventory: Order $order");
+page_head("Order","$PROJECT_NAME: Order $order");
 $dbconn = pg_connect($dbstring);
 if (!$dbconn) {
 	die('Could not connect: ' . pg_last_error());

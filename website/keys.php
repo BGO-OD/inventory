@@ -2,9 +2,9 @@
 
 
 include 'functions.php';
-include 'variables.php';
 
-page_head("Keys","B1 inventory: Keys");
+
+page_head("Keys","$PROJECT_NAME: Keys");
 $dbconn = pg_connect($dbstring);
 if (!$dbconn) {
 	  die('Could not connect: ' . pg_last_error());

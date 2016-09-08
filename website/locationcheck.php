@@ -2,7 +2,7 @@
 
 
 include 'functions.php';
-include 'variables.php';
+
 
 function check_present($value, $array) {
 	for ($i=0;$i<sizeof($array);$i++) {
@@ -119,7 +119,7 @@ if (isset($_REQUEST['json'])) {
 	exit;
 }
 
-page_head("B1 inventory","B1 inventory: Location check ".$location);
+page_head("$PROJECT_NAME","$PROJECT_NAME: Location check ".$location);
 ?>
 <script>
 	function get_item_for_location(value, arr) {

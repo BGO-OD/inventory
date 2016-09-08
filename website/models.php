@@ -2,7 +2,7 @@
 
 
 include 'functions.php';
-include 'variables.php';
+
 
 $typesel="";
 if (isset($_GET['condition'])) {
@@ -17,7 +17,7 @@ if (isset($_GET['condition'])) {
 	$condition="";
  }
 
-page_head("Models","B1 inventory: Models");
+page_head("Models","$PROJECT_NAME: Models");
 $dbconn = pg_connect($dbstring);
 if (!$dbconn) {
 	  die('Could not connect: ' . pg_last_error());

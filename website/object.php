@@ -2,7 +2,7 @@
 
 
 include 'functions.php';
-include 'variables.php';
+
 
 $enable_location_select=true;
 
@@ -103,7 +103,7 @@ $model=$row['model'];
 $object=$row['id'];
 
 
-page_head("B1 inventory","B1 inventory: Object $object");
+page_head("$PROJECT_NAME","$PROJECT_NAME: Object $object");
 echo "<div id=content><h1>Object $object</h1>";
 
 echo "<form action=\"object.php?object=$object\" method=\"POST\">";

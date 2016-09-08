@@ -2,7 +2,7 @@
 
 
 include 'functions.php';
-include 'variables.php';
+
 
 $enable_location_select=true;
 
@@ -33,7 +33,7 @@ function list_object_at($dbconn,$object,$name) {
 $object=$_GET['object'];
 
 
-page_head("B1 inventory","B1 inventory: Crate view $object");
+page_head("$PROJECT_NAME","$PROJECT_NAME: Crate view $object");
 $dbconn = pg_connect($dbstring);
 if (!$dbconn) {
 	  die('Could not connect: ' . pg_last_error());

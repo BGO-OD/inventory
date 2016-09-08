@@ -1,4 +1,7 @@
 <?php
+
+include 'variables.php'
+
 $enable_location_select=false;
 
 function get_location($dbconn,$id,$with_links=TRUE) {

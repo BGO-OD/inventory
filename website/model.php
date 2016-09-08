@@ -2,11 +2,11 @@
 
 
 include 'functions.php';
-include 'variables.php';
+
 
 $model=$_GET['model'];
 
-page_head("Model","B1 inventory: Model");
+page_head("Model","$PROJECT_NAME: Model");
 $dbconn = pg_connect($dbstring);
 if (!$dbconn) {
 	  die('Could not connect: ' . pg_last_error());

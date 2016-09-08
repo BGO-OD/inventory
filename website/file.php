@@ -1,5 +1,5 @@
 <?php
-include 'variables.php';
+
 
 if(isset($_GET['oid'])) {
 	$oid= $_GET['oid'];
