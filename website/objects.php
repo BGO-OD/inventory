@@ -134,6 +134,8 @@ if ($condition=="") {
 				echo "<h2>Add new Object</h2>\n";
 				
 				$result = pg_query($dbconn, "SELECT location,ownerid FROM objects ORDER BY id DESC LIMIT 1;");
+				$last_location="";
+				$last_owner="";
 				while ($row=pg_fetch_assoc($result)) {
 						$last_location=$row['location'];
 						$last_owner=$row['ownerid'];
