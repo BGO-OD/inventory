@@ -58,7 +58,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$result=pg_query($dbconn,$query);
 		break;
 	case 'update location':
-		$query="UPDATE objects SET location='{$_POST['location']}' , location_description='{$_POST['location_description']}' WHERE id=$object;";
+		if ($_POST['location'] == "0") {
+				// That's the toplevel.
+				$query="UPDATE objects SET location=NULL , location_description='{$_POST['location_description']}' WHERE id=$object;";
+		} else {
+				$query="UPDATE objects SET location='{$_POST['location']}' , location_description='{$_POST['location_description']}' WHERE id=$object;";
+		}
 		$result=pg_query($dbconn,$query);
 		break;
 	case 'update_user':

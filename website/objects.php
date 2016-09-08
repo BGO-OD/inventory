@@ -40,7 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$query="INSERT INTO objects (added,ownerid,model,serial,location,location_description,institute_inventory_number,order_number,object_name,comment) VALUES (";
 				$query.="'{$_POST['added']}', ";
 		}
-		$query.="'{$_POST['ownerid']}', ";
+		if ($_POST['ownerid'] == 'NULL') {
+				$query.="NULL, ";
+		} else {
+				$query.="'{$_POST['ownerid']}', ";
+		}
 		$query.="{$_POST['model']}, ";
 		$query.="'".pg_escape_string($dbconn,$_POST['serial'])."', ";
 		$query.="$location, ";

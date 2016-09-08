@@ -16,6 +16,11 @@ function get_location($dbconn,$id,$with_links=TRUE) {
 				return "Object location not found!";
 		}
 
+		if ($id == "" || $id == "0") {
+				// That's the toplevel.
+				return "";
+		}
+		
 		do {
 				$result=pg_query($dbconn,"SELECT id,location,object_name,models.type, location_description FROM objects inner join models on models.model=objects.model WHERE id='$id';");
 				if ($row=pg_fetch_assoc($result)) {
