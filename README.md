@@ -2,6 +2,9 @@
 
 PHP / Postgres based inventory system, originally developed for the BGO-OD experiment. 
 
+Attention! This system may only be used in protected internal networks as it is
+prone to SQL-Injection. Never ever have it accessible by the possibly maign public!
+
 ## Setup instructions
 
 ### Database
